@@ -1,0 +1,214 @@
+[Header]
+MagicCookie={0b13fe8c-dfe0-40eb-8900-6712719559a7}
+Version=1.0
+[File000]
+Location=C:\Program Files (x86)\Eclipse\workspace\Firmware All\PR116\main.o
+Folder=Intermediary
+DeviceName=PIC24FJ128GA106
+LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
+LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPLAB C30\bin\pic30-gcc.exe
+PPAD=$(BINDIR)|.\24F-output||$(TMPDIR)||$(AINDIR)||$(INCDIR)|.\24F-include;..\Microchip\Include||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|24F-source\main.c|24F-source\relayFunctions.c|24F-source\serLedDriver.c|24F-source\analog.c|24F-source\uart1.c|..\Global-PIC18\interruptHandler_SystemTick.c|24F-source\inputHandler.c|24F-source\pwmProcess.c|24F-source\configFunctions.c|24F-source\flashSaveOperations.c|24F-source\ledFunctions.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=-g -Wall
+TraceCmdString=
+DebugOptions=-D__DEBUG
+[File001]
+Location=C:\Program Files (x86)\Eclipse\workspace\Firmware All\PR116\relayFunctions.o
+Folder=Intermediary
+DeviceName=PIC24FJ128GA106
+LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
+LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPLAB C30\bin\pic30-gcc.exe
+PPAD=$(BINDIR)|.\24F-output||$(TMPDIR)||$(AINDIR)||$(INCDIR)|.\24F-include;..\Microchip\Include||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|24F-source\main.c|24F-source\relayFunctions.c|24F-source\serLedDriver.c|24F-source\analog.c|24F-source\uart1.c|..\Global-PIC18\interruptHandler_SystemTick.c|24F-source\inputHandler.c|24F-source\pwmProcess.c|24F-source\configFunctions.c|24F-source\flashSaveOperations.c|24F-source\ledFunctions.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=-g -Wall
+TraceCmdString=
+DebugOptions=-D__DEBUG
+[File002]
+Location=C:\Program Files (x86)\Eclipse\workspace\Firmware All\PR116\serLedDriver.o
+Folder=Intermediary
+DeviceName=PIC24FJ128GA106
+LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
+LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPLAB C30\bin\pic30-gcc.exe
+PPAD=$(BINDIR)|.\24F-output||$(TMPDIR)||$(AINDIR)||$(INCDIR)|.\24F-include;..\Microchip\Include||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|24F-source\main.c|24F-source\relayFunctions.c|24F-source\serLedDriver.c|24F-source\analog.c|24F-source\uart1.c|..\Global-PIC18\interruptHandler_SystemTick.c|24F-source\inputHandler.c|24F-source\pwmProcess.c|24F-source\configFunctions.c|24F-source\flashSaveOperations.c|24F-source\ledFunctions.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=-g -Wall
+TraceCmdString=
+DebugOptions=-D__DEBUG
+[File003]
+Location=C:\Program Files (x86)\Eclipse\workspace\Firmware All\PR116\analog.o
+Folder=Intermediary
+DeviceName=PIC24FJ128GA106
+LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
+LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPLAB C30\bin\pic30-gcc.exe
+PPAD=$(BINDIR)|.\24F-output||$(TMPDIR)||$(AINDIR)||$(INCDIR)|.\24F-include;..\Microchip\Include||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|24F-source\main.c|24F-source\relayFunctions.c|24F-source\serLedDriver.c|24F-source\analog.c|24F-source\uart1.c|..\Global-PIC18\interruptHandler_SystemTick.c|24F-source\inputHandler.c|24F-source\pwmProcess.c|24F-source\configFunctions.c|24F-source\flashSaveOperations.c|24F-source\ledFunctions.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=-g -Wall
+TraceCmdString=
+DebugOptions=-D__DEBUG
+[File004]
+Location=C:\Program Files (x86)\Eclipse\workspace\Firmware All\PR116\uart1.o
+Folder=Intermediary
+DeviceName=PIC24FJ128GA106
+LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
+LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPLAB C30\bin\pic30-gcc.exe
+PPAD=$(BINDIR)|.\24F-output||$(TMPDIR)||$(AINDIR)||$(INCDIR)|.\24F-include;..\Microchip\Include||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|24F-source\main.c|24F-source\relayFunctions.c|24F-source\serLedDriver.c|24F-source\analog.c|24F-source\uart1.c|..\Global-PIC18\interruptHandler_SystemTick.c|24F-source\inputHandler.c|24F-source\pwmProcess.c|24F-source\configFunctions.c|24F-source\flashSaveOperations.c|24F-source\ledFunctions.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=-g -Wall
+TraceCmdString=
+DebugOptions=-D__DEBUG
+[File005]
+Location=C:\Program Files (x86)\Eclipse\workspace\Firmware All\PR116\interruptHandler_SystemTick.o
+Folder=Intermediary
+DeviceName=PIC24FJ128GA106
+LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
+LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPLAB C30\bin\pic30-gcc.exe
+PPAD=$(BINDIR)|.\24F-output||$(TMPDIR)||$(AINDIR)||$(INCDIR)|.\24F-include;..\Microchip\Include||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|24F-source\main.c|24F-source\relayFunctions.c|24F-source\serLedDriver.c|24F-source\analog.c|24F-source\uart1.c|..\Global-PIC18\interruptHandler_SystemTick.c|24F-source\inputHandler.c|24F-source\pwmProcess.c|24F-source\configFunctions.c|24F-source\flashSaveOperations.c|24F-source\ledFunctions.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=-g -Wall
+TraceCmdString=
+DebugOptions=-D__DEBUG
+[File006]
+Location=C:\Program Files (x86)\Eclipse\workspace\Firmware All\PR116\inputHandler.o
+Folder=Intermediary
+DeviceName=PIC24FJ128GA106
+LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
+LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPLAB C30\bin\pic30-gcc.exe
+PPAD=$(BINDIR)|.\24F-output||$(TMPDIR)||$(AINDIR)||$(INCDIR)|.\24F-include;..\Microchip\Include||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|24F-source\main.c|24F-source\relayFunctions.c|24F-source\serLedDriver.c|24F-source\analog.c|24F-source\uart1.c|..\Global-PIC18\interruptHandler_SystemTick.c|24F-source\inputHandler.c|24F-source\pwmProcess.c|24F-source\configFunctions.c|24F-source\flashSaveOperations.c|24F-source\ledFunctions.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=-g -Wall
+TraceCmdString=
+DebugOptions=-D__DEBUG
+[File007]
+Location=C:\Program Files (x86)\Eclipse\workspace\Firmware All\PR116\pwmProcess.o
+Folder=Intermediary
+DeviceName=PIC24FJ128GA106
+LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
+LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPLAB C30\bin\pic30-gcc.exe
+PPAD=$(BINDIR)|.\24F-output||$(TMPDIR)||$(AINDIR)||$(INCDIR)|.\24F-include;..\Microchip\Include||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|24F-source\main.c|24F-source\relayFunctions.c|24F-source\serLedDriver.c|24F-source\analog.c|24F-source\uart1.c|..\Global-PIC18\interruptHandler_SystemTick.c|24F-source\inputHandler.c|24F-source\pwmProcess.c|24F-source\configFunctions.c|24F-source\flashSaveOperations.c|24F-source\ledFunctions.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=-g -Wall
+TraceCmdString=
+DebugOptions=-D__DEBUG
+[File008]
+Location=C:\Program Files (x86)\Eclipse\workspace\Firmware All\PR116\configFunctions.o
+Folder=Intermediary
+DeviceName=PIC24FJ128GA106
+LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
+LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPLAB C30\bin\pic30-gcc.exe
+PPAD=$(BINDIR)|.\24F-output||$(TMPDIR)||$(AINDIR)||$(INCDIR)|.\24F-include;..\Microchip\Include||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|24F-source\main.c|24F-source\relayFunctions.c|24F-source\serLedDriver.c|24F-source\analog.c|24F-source\uart1.c|..\Global-PIC18\interruptHandler_SystemTick.c|24F-source\inputHandler.c|24F-source\pwmProcess.c|24F-source\configFunctions.c|24F-source\flashSaveOperations.c|24F-source\ledFunctions.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=-g -Wall
+TraceCmdString=
+DebugOptions=-D__DEBUG
+[File009]
+Location=C:\Program Files (x86)\Eclipse\workspace\Firmware All\PR116\flashSaveOperations.o
+Folder=Intermediary
+DeviceName=PIC24FJ128GA106
+LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
+LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPLAB C30\bin\pic30-gcc.exe
+PPAD=$(BINDIR)|.\24F-output||$(TMPDIR)||$(AINDIR)||$(INCDIR)|.\24F-include;..\Microchip\Include||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|24F-source\main.c|24F-source\relayFunctions.c|24F-source\serLedDriver.c|24F-source\analog.c|24F-source\uart1.c|..\Global-PIC18\interruptHandler_SystemTick.c|24F-source\inputHandler.c|24F-source\pwmProcess.c|24F-source\configFunctions.c|24F-source\flashSaveOperations.c|24F-source\ledFunctions.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=-g -Wall
+TraceCmdString=
+DebugOptions=-D__DEBUG
+[File010]
+Location=C:\Program Files (x86)\Eclipse\workspace\Firmware All\PR116\ledFunctions.o
+Folder=Intermediary
+DeviceName=PIC24FJ128GA106
+LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
+LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPLAB C30\bin\pic30-gcc.exe
+PPAD=$(BINDIR)|.\24F-output||$(TMPDIR)||$(AINDIR)||$(INCDIR)|.\24F-include;..\Microchip\Include||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|24F-source\main.c|24F-source\relayFunctions.c|24F-source\serLedDriver.c|24F-source\analog.c|24F-source\uart1.c|..\Global-PIC18\interruptHandler_SystemTick.c|24F-source\inputHandler.c|24F-source\pwmProcess.c|24F-source\configFunctions.c|24F-source\flashSaveOperations.c|24F-source\ledFunctions.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=-g -Wall
+TraceCmdString=
+DebugOptions=-D__DEBUG
+[File011]
+Location=E:\USE_SVN\Projecten\Firmware\trunk\KeaDrone\main.o
+Folder=Intermediary
+DeviceName=PIC24HJ64GP204
+LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
+LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPLAB C30\bin\pic30-gcc.exe
+PPAD=$(BINDIR)|.\24F-output||$(TMPDIR)||$(AINDIR)||$(INCDIR)|.\24F-include;..\Microchip\Include||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|24F-source\main.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=-g -Wall
+TraceCmdString=
+DebugOptions=-D__DEBUG
+[File012]
+Location=C:\Program Files (x86)\Eclipse\workspace\Firmware All\PR116\.\24F-output\24F-Project.cof
+Folder=Output
+DeviceName=PIC24FJ128GA106
+LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
+LanguageToolID={433C3D55-811D-409D-A6BF-159CF9355B42}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPLAB C30\bin\pic30-ld.exe
+PPAD=$(BINDIR)|.\24F-output||$(TMPDIR)||$(AINDIR)||$(INCDIR)|.\24F-include;..\Microchip\Include||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|24F-source\main.c|24F-source\relayFunctions.c|24F-source\serLedDriver.c|24F-source\analog.c|24F-source\uart1.c|..\Global-PIC18\interruptHandler_SystemTick.c|24F-source\inputHandler.c|24F-source\pwmProcess.c|24F-source\configFunctions.c|24F-source\flashSaveOperations.c|24F-source\ledFunctions.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=-Map="$(BINDIR_)$(TARGETBASE).map" --report-mem -o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)"
+TraceCmdString=
+DebugOptions=--defsym=__MPLAB_DEBUG=1
+[File013]
+Location=C:\Program Files (x86)\Eclipse\workspace\Firmware All\PR116\.\24F-output\24F-Project.hex
+Folder=Output
+DeviceName=PIC24FJ128GA106
+LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
+LanguageToolID={433C3D55-811D-409D-A6BF-159CF9355B42}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPLAB C30\bin\pic30-ld.exe
+PPAD=$(BINDIR)|.\24F-output||$(TMPDIR)||$(AINDIR)||$(INCDIR)|.\24F-include;..\Microchip\Include||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|24F-source\main.c|24F-source\relayFunctions.c|24F-source\serLedDriver.c|24F-source\analog.c|24F-source\uart1.c|..\Global-PIC18\interruptHandler_SystemTick.c|24F-source\inputHandler.c|24F-source\pwmProcess.c|24F-source\configFunctions.c|24F-source\flashSaveOperations.c|24F-source\ledFunctions.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=-Map="$(BINDIR_)$(TARGETBASE).map" --report-mem -o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)"
+TraceCmdString=
+DebugOptions=--defsym=__MPLAB_DEBUG=1
+[File014]
+Location=E:\USE_SVN\Projecten\Firmware\trunk\KeaDrone\.\24F-output\24F-Project.cof
+Folder=Output
+DeviceName=PIC24HJ64GP204
+LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
+LanguageToolID={433C3D55-811D-409D-A6BF-159CF9355B42}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPLAB C30\bin\pic30-ld.exe
+PPAD=$(BINDIR)|.\24F-output||$(TMPDIR)||$(AINDIR)||$(INCDIR)|.\24F-include;..\Microchip\Include||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|24F-source\main.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=-Map="$(BINDIR_)$(TARGETBASE).map" --report-mem -o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)"
+TraceCmdString=
+DebugOptions=--defsym=__MPLAB_DEBUG=1
+[File015]
+Location=E:\USE_SVN\Projecten\Firmware\trunk\KeaDrone\.\24F-output\24F-Project.hex
+Folder=Output
+DeviceName=PIC24HJ64GP204
+LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
+LanguageToolID={433C3D55-811D-409D-A6BF-159CF9355B42}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPLAB C30\bin\pic30-ld.exe
+PPAD=$(BINDIR)|.\24F-output||$(TMPDIR)||$(AINDIR)||$(INCDIR)|.\24F-include;..\Microchip\Include||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|24F-source\main.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=-Map="$(BINDIR_)$(TARGETBASE).map" --report-mem -o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)"
+TraceCmdString=
+DebugOptions=--defsym=__MPLAB_DEBUG=1
+[TOOL_LOC_STAMPS]
+tool_loc{069BD372-6CA0-40D4-BF2F-5DC806D05083}=C:\Program Files (x86)\Microchip\MPLAB C30\bin\pic30-gcc.exe
+tool_loc{433C3D55-811D-409D-A6BF-159CF9355B42}=C:\Program Files (x86)\Microchip\MPLAB C30\bin\pic30-ld.exe
