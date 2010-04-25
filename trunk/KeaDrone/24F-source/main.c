@@ -80,7 +80,7 @@ int main(void)
 		_CH0SA = adcChannel; //CH0SA<4:0>: Channel 0 Positive Input Select for Sample A bits
 		_VCFG = vRef; //External VREF+ only
 
-		if (abs(((INT32) (ADCValue - shadow))) > 10)
+		if (abs(((INT32) (ADCValue - shadow))) > 5)
 		{
 			_LATA3 = 1;
 			simpleCounter = 0;
@@ -89,7 +89,7 @@ int main(void)
 		}
 		else
 		{
-			if (simpleCounter < 0xFFFF)
+			if (simpleCounter < 0xFFF)
 			{
 				simpleCounter++;
 

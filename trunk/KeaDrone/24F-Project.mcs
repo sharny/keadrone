@@ -158,6 +158,32 @@ ToolArgsString=-g -Wall
 TraceCmdString=
 DebugOptions=-D__DEBUG
 [File012]
+Location=C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\main.o
+Folder=Intermediary
+DeviceName=PIC24HJ64GP204
+LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
+LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPLAB C30\bin\pic30-gcc.exe
+PPAD=$(BINDIR)|.\24F-output||$(TMPDIR)||$(AINDIR)||$(INCDIR)|.\24F-include;..\Microchip\Include||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|24F-source\main.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=-g -Wall
+TraceCmdString=
+DebugOptions=-D__DEBUG
+[File013]
+Location=C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\main.o
+Folder=Intermediary
+DeviceName=PIC24HJ64GP204
+LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
+LanguageToolID={069BD372-6CA0-40D4-BF2F-5DC806D05083}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPLAB C30\bin\pic30-gcc.exe
+PPAD=$(BINDIR)|.\24F-output||$(TMPDIR)||$(AINDIR)||$(INCDIR)|.\24F-include;..\Microchip\Include||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|24F-source\main.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=-g -Wall
+TraceCmdString=
+DebugOptions=-D__DEBUG
+[File014]
 Location=C:\Program Files (x86)\Eclipse\workspace\Firmware All\PR116\.\24F-output\24F-Project.cof
 Folder=Output
 DeviceName=PIC24FJ128GA106
@@ -170,7 +196,7 @@ SuiteArgsString=
 ToolArgsString=-Map="$(BINDIR_)$(TARGETBASE).map" --report-mem -o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)"
 TraceCmdString=
 DebugOptions=--defsym=__MPLAB_DEBUG=1
-[File013]
+[File015]
 Location=C:\Program Files (x86)\Eclipse\workspace\Firmware All\PR116\.\24F-output\24F-Project.hex
 Folder=Output
 DeviceName=PIC24FJ128GA106
@@ -183,7 +209,7 @@ SuiteArgsString=
 ToolArgsString=-Map="$(BINDIR_)$(TARGETBASE).map" --report-mem -o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)"
 TraceCmdString=
 DebugOptions=--defsym=__MPLAB_DEBUG=1
-[File014]
+[File016]
 Location=E:\USE_SVN\Projecten\Firmware\trunk\KeaDrone\.\24F-output\24F-Project.cof
 Folder=Output
 DeviceName=PIC24HJ64GP204
@@ -196,8 +222,60 @@ SuiteArgsString=
 ToolArgsString=-Map="$(BINDIR_)$(TARGETBASE).map" --report-mem -o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)"
 TraceCmdString=
 DebugOptions=--defsym=__MPLAB_DEBUG=1
-[File015]
+[File017]
 Location=E:\USE_SVN\Projecten\Firmware\trunk\KeaDrone\.\24F-output\24F-Project.hex
+Folder=Output
+DeviceName=PIC24HJ64GP204
+LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
+LanguageToolID={433C3D55-811D-409D-A6BF-159CF9355B42}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPLAB C30\bin\pic30-ld.exe
+PPAD=$(BINDIR)|.\24F-output||$(TMPDIR)||$(AINDIR)||$(INCDIR)|.\24F-include;..\Microchip\Include||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|24F-source\main.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=-Map="$(BINDIR_)$(TARGETBASE).map" --report-mem -o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)"
+TraceCmdString=
+DebugOptions=--defsym=__MPLAB_DEBUG=1
+[File018]
+Location=C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\.\24F-output\24F-Project.cof
+Folder=Output
+DeviceName=PIC24HJ64GP204
+LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
+LanguageToolID={433C3D55-811D-409D-A6BF-159CF9355B42}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPLAB C30\bin\pic30-ld.exe
+PPAD=$(BINDIR)|.\24F-output||$(TMPDIR)||$(AINDIR)||$(INCDIR)|.\24F-include;..\Microchip\Include||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|24F-source\main.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=-Map="$(BINDIR_)$(TARGETBASE).map" --report-mem -o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)"
+TraceCmdString=
+DebugOptions=--defsym=__MPLAB_DEBUG=1
+[File019]
+Location=C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\.\24F-output\24F-Project.hex
+Folder=Output
+DeviceName=PIC24HJ64GP204
+LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
+LanguageToolID={433C3D55-811D-409D-A6BF-159CF9355B42}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPLAB C30\bin\pic30-ld.exe
+PPAD=$(BINDIR)|.\24F-output||$(TMPDIR)||$(AINDIR)||$(INCDIR)|.\24F-include;..\Microchip\Include||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|24F-source\main.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=-Map="$(BINDIR_)$(TARGETBASE).map" --report-mem -o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)"
+TraceCmdString=
+DebugOptions=--defsym=__MPLAB_DEBUG=1
+[File020]
+Location=C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\.\24F-output\24F-Project.cof
+Folder=Output
+DeviceName=PIC24HJ64GP204
+LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
+LanguageToolID={433C3D55-811D-409D-A6BF-159CF9355B42}
+LanguageToolLocation=C:\Program Files (x86)\Microchip\MPLAB C30\bin\pic30-ld.exe
+PPAD=$(BINDIR)|.\24F-output||$(TMPDIR)||$(AINDIR)||$(INCDIR)|.\24F-include;..\Microchip\Include||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|24F-source\main.c||<obj>||<lib>||<lkr>||
+SuiteArgsString=
+ToolArgsString=-Map="$(BINDIR_)$(TARGETBASE).map" --report-mem -o"$(BINDIR_)$(TARGETBASE).$(TARGETSUFFIX)"
+TraceCmdString=
+DebugOptions=--defsym=__MPLAB_DEBUG=1
+[File021]
+Location=C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\.\24F-output\24F-Project.hex
 Folder=Output
 DeviceName=PIC24HJ64GP204
 LanguageToolSuiteID={479DDE59-4D56-455E-855E-FFF59A3DB57E}
