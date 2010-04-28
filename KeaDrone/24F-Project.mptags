@@ -6,9 +6,25 @@
 !_TAG_PROGRAM_VERSION	5.5.4	//
 !_TAG_REVISION_NAME	MCHPTags	//
 !_TAG_REVISION_VERSION	6.0.1	//
-ADCValue	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	72;"	l	line:72
-_FBS	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	15;"	f	line:15
-adcChannel	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	70;"	l	line:70
-shadow	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	73;"	l	line:73
-simpleCounter	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	74;"	l	line:74
-vRef	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	71;"	l	line:71
+ADCValue	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	120;"	l	line:120	file:
+BAUDRATE::19200	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	92;"	d	line:92	file:
+BRGVAL::((FCY/BAUDRATE)/16)-1	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	93;"	d	line:93	file:
+FCY::40000000	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	91;"	d	line:91	file:
+GYRO1_IO_PWR_DWN::_LATA7	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	31;"	d	line:31	file:
+GYRO1_IO_RST_HP::_LATA10	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	32;"	d	line:32	file:
+GYRO1_IO_SELF_TST::_LATC5	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	30;"	d	line:30	file:
+LED_B::_LATA2	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	50;"	d	line:50	file:
+LED_GR::_LATA8	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	49;"	d	line:49	file:
+LED_R::_LATA3	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	48;"	d	line:48	file:
+_FBS	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	18;"	f	line:18
+_U1TXInterrupt	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	83;"	f	line:83	signature:(void)
+adcChannel	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	118;"	l	line:118
+analogDemo	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	116;"	f	line:116	signature:(void)
+analogInit	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	65;"	f	line:65	signature:(void)
+dender	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	124;"	l	line:124	file:
+ledsInit	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	46;"	f	line:46	signature:(void)
+main	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	160;"	f	line:160	signature:(void)
+serialPortInit	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	89;"	f	line:89	signature:(void)
+shadow	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	121;"	l	line:121
+simpleCounter	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	122;"	l	line:122
+vRef	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	119;"	l	line:119
