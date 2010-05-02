@@ -6,25 +6,31 @@
 !_TAG_PROGRAM_VERSION	5.5.4	//
 !_TAG_REVISION_NAME	MCHPTags	//
 !_TAG_REVISION_VERSION	6.0.1	//
-ADCValue	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	120;"	l	line:120	file:
-BAUDRATE::19200	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	92;"	d	line:92	file:
-BRGVAL::((FCY/BAUDRATE)/16)-1	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	93;"	d	line:93	file:
-FCY::40000000	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	91;"	d	line:91	file:
-GYRO1_IO_PWR_DWN::_LATA7	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	31;"	d	line:31	file:
-GYRO1_IO_RST_HP::_LATA10	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	32;"	d	line:32	file:
-GYRO1_IO_SELF_TST::_LATC5	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	30;"	d	line:30	file:
-LED_B::_LATA2	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	50;"	d	line:50	file:
-LED_GR::_LATA8	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	49;"	d	line:49	file:
-LED_R::_LATA3	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	48;"	d	line:48	file:
-_FBS	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	18;"	f	line:18
-_U1TXInterrupt	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	83;"	f	line:83	signature:(void)
-adcChannel	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	118;"	l	line:118
-analogDemo	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	116;"	f	line:116	signature:(void)
-analogInit	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	65;"	f	line:65	signature:(void)
-dender	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	124;"	l	line:124	file:
-ledsInit	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	46;"	f	line:46	signature:(void)
-main	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	160;"	f	line:160	signature:(void)
-serialPortInit	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	89;"	f	line:89	signature:(void)
-shadow	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	121;"	l	line:121
-simpleCounter	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	122;"	l	line:122
-vRef	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	119;"	l	line:119
+ADCValue	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	89;"	l	line:89	file:
+BAUDRATE::19200	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\portRS232-interface.c	46;"	d	line:46	file:
+BRGVAL::((FCY/BAUDRATE)/16)-1	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\portRS232-interface.c	47;"	d	line:47	file:
+FCY::40000000	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\portRS232-interface.c	45;"	d	line:45	file:
+GYRO1_IO_PWR_DWN::_LATA7	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	33;"	d	line:33	file:
+GYRO1_IO_RST_HP::_LATA10	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	34;"	d	line:34	file:
+GYRO1_IO_SELF_TST::_LATC5	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	32;"	d	line:32	file:
+LED_B::_LATA2	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	52;"	d	line:52	file:
+LED_GR::_LATA8	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	51;"	d	line:51	file:
+LED_R::_LATA3	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	50;"	d	line:50	file:
+_FBS	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	20;"	f	line:20
+_U1RXInterrupt	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\portRS232-interface.c	32;"	f	line:32	signature:(void)
+_U1TXInterrupt	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\portRS232-interface.c	21;"	f	line:21	signature:(void)
+adcChannel	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	87;"	l	line:87
+analogDemo	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	85;"	f	line:85	signature:(void)
+analogInit	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	67;"	f	line:67	signature:(void)
+bufferUart	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\portRS232-interface.c	16;"	t	line:16	file:
+data	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\portRS232-interface.c	15;"	m	line:15	file:
+dender	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	93;"	l	line:93	file:
+functionName	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\portRS232-interface.c	14;"	m	line:14	file:
+ledsInit	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	48;"	f	line:48	signature:(void)
+main	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	129;"	f	line:129	signature:(void)
+ptrBuffers	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\portRS232-interface.c	18;"	v	line:18
+serialPortInit	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\portRS232-interface.c	43;"	f	line:43	signature:(void)
+shadow	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	90;"	l	line:90
+simpleCounter	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	91;"	l	line:91
+uartPut	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\portRS232-interface.c	38;"	f	line:38	signature:(UINT8* stringArray)
+vRef	C:\Program Files (x86)\Eclipse\workspace\Firmware All\KeaDrone\keadrone\KeaDrone\24F-source\main.c	88;"	l	line:88
