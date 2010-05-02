@@ -14,6 +14,8 @@
 /* Include drivers */
 
 #if defined(__PIC24H__)
+//PIC24HJ64GP204-I/ML
+//http://www.microchip.com/wwwproducts/Devices.aspx?dDocName=en534555
 /* Fuse settings */
 _FBS (BWRP_WRPROTECT_OFF)
 _FGS (GSS_OFF &GCP_OFF &GWRP_OFF)
@@ -78,39 +80,6 @@ void analogInit(void)
 	_CH0SB = 0; //CH0SB<4:0>: Channel 0 Positive Input Select for Sample B bits
 	_CH0SA = 0; //CH0SA<4:0>: Channel 0 Positive Input Select for Sample A bits
 
-}
-
-void __attribute__((__interrupt__, auto_psv)) _U1TXInterrupt(void)
-{
-	IFS0bits.U1TXIF = 0; // clear TX interrupt flag
-
-}
-
-void serialPortInit(void)
-{
-#define FCY 40000000
-#define BAUDRATE 19200
-#define BRGVAL ((FCY/BAUDRATE)/16)-1
-
-	// Zigbee @19k2, No Flow, 8Data, NoParity, 1stopbits
-	// RP5 = RX -- RP6 = TX
-
-	_RP5R = 3;
-
-	U1MODEbits.STSEL = 0; // 1-stop bit
-	U1MODEbits.PDSEL = 0; // No Parity, 8-data bits
-	U1MODEbits.ABAUD = 0; // Auto-Baud Disabled
-	U1MODEbits.BRGH = 0; // Low Speed mode
-	U1BRG = BRGVAL; // BAUD Rate Setting for xxxx
-	/* Interrupt generated when a character is transferred
-	 * to the Transmit Shift register and the transmit buffer becomes empty*/
-	U1STAbits.UTXISEL0 = 0;
-	U1STAbits.UTXISEL1 = 1;
-	IEC0bits.U1TXIE = 1; // Enable UART TX interrupt
-	U1MODEbits.UARTEN = 1; // Enable UART
-	U1STAbits.UTXEN = 1; // Enable UART TX
-
-	U1TXREG = 'a'; // Transmit one character
 }
 
 void analogDemo(void)
