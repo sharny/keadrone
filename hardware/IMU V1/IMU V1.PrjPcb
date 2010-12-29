@@ -312,6 +312,21 @@ ClassGenNCAutoScope=None
 DItemRevisionGUID=
 
 [Document20]
+DocumentPath=Frame.PcbDoc
+AnnotationEnabled=1
+AnnotateStartValue=1
+AnnotationIndexControlEnabled=0
+AnnotateSuffix=
+AnnotateScope=All
+AnnotateOrder=-1
+DoLibraryUpdate=1
+DoDatabaseUpdate=1
+ClassGenCCAutoEnabled=1
+ClassGenCCAutoRoomEnabled=1
+ClassGenNCAutoScope=None
+DItemRevisionGUID=
+
+[Document21]
 DocumentPath=Power Entry 24v-3pin Fused-1A5.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -326,7 +341,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 
-[Document21]
+[Document22]
 DocumentPath=GPS Connector - LS20031.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -341,7 +356,7 @@ ClassGenCCAutoRoomEnabled=1
 ClassGenNCAutoScope=None
 DItemRevisionGUID=
 
-[Document22]
+[Document23]
 DocumentPath=Regulator 3v3-250mA MCP1702.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
