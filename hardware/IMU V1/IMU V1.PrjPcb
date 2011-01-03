@@ -405,6 +405,14 @@ DItemRevisionGUID=
 DocumentPath=Project Outputs for Werkina slow ramp up_down\Design Rule Check - IMU V1.html
 DItemRevisionGUID=
 
+[GeneratedDocument2]
+DocumentPath=IMU V1 3-1-2011 9-12-07.WAS
+DItemRevisionGUID=
+
+[GeneratedDocument3]
+DocumentPath=IMU V1 3-1-2011 9-12-34.WAS
+DItemRevisionGUID=
+
 [DeviceSheetFolder1]
 Path=E:\USE_SVN\Projecten\Hardware\Altium Core Files\Device Sheets\
 IncludeSubFolders=1
