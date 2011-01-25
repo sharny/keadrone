@@ -205,7 +205,7 @@ static void prvQueueReceiveTask(void *pvParameters) {
 		/* Wait until something arrives in the queue - this task will block
 		 indefinitely provided INCLUDE_vTaskSuspend is set to 1 in
 		 FreeRTOSConfig.h. */
-		xQueueReceive( xQueue, &ulReceivedValue, portMAX_DELAY );
+		xQueueReceive( xQueue, &ulReceivedValue, 1000);//portMAX_DELAY );
 
 		/*  To get here something must have been received from the queue, but
 		 is it the expected value?  If it is, toggle the LED. */

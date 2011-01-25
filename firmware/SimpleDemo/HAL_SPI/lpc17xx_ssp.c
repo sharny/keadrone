@@ -201,7 +201,7 @@ uint8_t SSP_GetDataSize(LPC_SSP_TypeDef* SSPx)
 *******************************************************************************/
 void SSP_ConfigStructInit(SSP_CFG_Type *SSP_InitStruct)
 {
-	SSP_InitStruct->CPHA = SSP_CPHA_FIRST;
+	SSP_InitStruct->CPHA = SSP_CPHA_SECOND;
 	SSP_InitStruct->CPOL = SSP_CPOL_LO;
 	SSP_InitStruct->ClockRate = 1000000;
 	SSP_InitStruct->Databit = SSP_DATABIT_8;
