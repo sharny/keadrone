@@ -5,25 +5,77 @@
 #include "lpc17xx_ssp.h"
 #include "bma180.h"
 
+/* Kernel includes. */
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+
 #define SSP_CHANNEL LPC_SSP0
 #define PORT_CS	LPC_GPIO0
 #define PIN_MASK_CS (1<<16)
 
-static const uint8_t segmentLUT[10] = {
-//FCPBAGED
-		(uint8_t) ~0b11011011, // 0
-		(uint8_t) ~0b01010000, // 1
-		(uint8_t) ~0b00011111, // 2
-		(uint8_t) ~0b01011101, // 3
-		(uint8_t) ~0b11010100, // 4
-		(uint8_t) ~0b11001101, // 5
-		(uint8_t) ~0b11001111, // 6
-		(uint8_t) ~0b01011000, // 7
-		(uint8_t) ~0b11011111, // 8
-		(uint8_t) ~0b11011101, // 9
-		};
+/* The rate at which data is sent to the queue, specified in milliseconds. */
+#define delay_1ms			( 1 / portTICK_RATE_MS )
 
-#ifdef todo
+static void delay_ms(uint16_t value) {
+	portTickType xNextWakeTime;
+	vTaskDelayUntil(&xNextWakeTime, (delay_1ms * value));
+
+}
+
+char read(uint8_t address) {
+	//returns the contents of any 1 byte register from any address
+	//sets the MSB for every address byte (READ mode)
+
+	char rxBuff;
+	SSP_DATA_SETUP_Type sspDataConfig;
+
+	PORT_CS->FIOCLR |= PIN_MASK_CS; //CS low
+
+	address |= 0x80;
+	sspDataConfig.length = 1;
+	sspDataConfig.tx_data = &address;
+	sspDataConfig.rx_data = &rxBuff;
+
+	SSP_ReadWrite(SSP_CHANNEL, &sspDataConfig, SSP_TRANSFER_POLLING);
+	address = 0x55;//dummy write
+	SSP_ReadWrite(SSP_CHANNEL, &sspDataConfig, SSP_TRANSFER_POLLING);
+
+	PORT_CS->FIOSET |= PIN_MASK_CS; //CS High
+
+	return rxBuff;
+}
+
+void write(uint8_t address, char data) {
+	//write any data byte to any single address
+	//adds a 0 to the MSB of the address byte (WRITE mode)
+
+	address &= 0x7F;
+	char rxBuff;
+	SSP_DATA_SETUP_Type sspDataConfig;
+
+	//printf("\nWriting 0x%x to 0x%x\n", data, address);
+
+	PORT_CS->FIOCLR |= PIN_MASK_CS; //CS low
+
+	delay_ms(1);
+
+	sspDataConfig.tx_data = &address;
+	sspDataConfig.rx_data = &rxBuff;
+	SSP_ReadWrite(SSP_CHANNEL, &sspDataConfig, SSP_TRANSFER_POLLING);
+
+	delay_ms(1);
+
+	sspDataConfig.tx_data = &data;
+	sspDataConfig.rx_data = &rxBuff;
+	SSP_ReadWrite(SSP_CHANNEL, &sspDataConfig, SSP_TRANSFER_POLLING);
+
+	delay_ms(1);
+
+	PORT_CS->FIOSET |= PIN_MASK_CS; //CS High
+
+}
+
 // init_BMA180
 // Input: range is a 3-bit value between 0x00 and 0x06 will set the range as described in the BMA180 datasheet (pg. 27)
 // bw is a 4-bit value between 0x00 and 0x09.  Again described on pg. 27
@@ -33,7 +85,7 @@ int init_BMA180(uint8_t range, uint8_t bw) {
 
 	// if connected correctly, ID register should be 3
 	if (read(ID) != 3)
-	return -1;
+		return -1;
 
 	//-------------------------------------------------------------------------------------
 	// Set ee_w bit
@@ -60,7 +112,6 @@ int init_BMA180(uint8_t range, uint8_t bw) {
 
 	return 0;
 }
-#endif
 
 int main_spi(void) {
 	static int startup = FALSE;
@@ -78,12 +129,31 @@ int main_spi(void) {
 
 		LPC_PINCON->PINSEL0 |= 0x2 << 30; //SCK0 p0.15
 		LPC_PINCON->PINSEL1 |= 0x2 << 4; //MOSI0 p0.18
+		LPC_PINCON->PINSEL1 |= 0x2 << 2; //MISO0 p0.17
+
 		PORT_CS->FIODIR |= 1 << 16; //P0.16 as CSn (acc. meter)
 
 		SSP_ConfigStructInit(&sspChannelConfig);
 		SSP_Init(SSP_CHANNEL, &sspChannelConfig);
 		SSP_Cmd(SSP_CHANNEL, ENABLE);
+		while (init_BMA180(0x01, 0x00) != 0) {
+			printf("Error connecting to BMA180\n");
+			delay_ms(1000);
+		}
 	}
+	char temp = 0;
+	signed short temp2;
+
+	while (temp != 1) {
+		temp = read(ACCXLSB) & 0x01;
+	}
+	temp = read(ACCXMSB);
+	temp2 = temp << 8;
+	temp2 |= read(ACCXLSB);
+	temp2 = temp2 >> 2; // Get rid of two non-value bits in LSB
+	printf("%d \n", temp2);
+
+#ifdef not_used
 	//while (1) {
 	if (timeKeeper++ % 500000 == 0) {
 		PORT_CS->FIOCLR |= PIN_MASK_CS; //CS low
@@ -92,17 +162,18 @@ int main_spi(void) {
 		sspDataConfig.tx_data = txBuff;
 		sspDataConfig.rx_data = rxBuff;
 
-		txBuff[0] = segmentLUT[i++]; //Buffer next numeral
+		//	txBuff[0] = segmentLUT[i++]; //Buffer next numeral
 
 		//Only display 0-9
 		if (i == 10)
-			i = 0;
+		i = 0;
 
 		//Transfer to 7-Segment Display Driver
 		SSP_ReadWrite(SSP_CHANNEL, &sspDataConfig, SSP_TRANSFER_POLLING);
 
 		PORT_CS->FIOSET |= PIN_MASK_CS; //CS High
 	}
+#endif
 	//}
 	return 0;
 }
