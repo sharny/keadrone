@@ -33,6 +33,7 @@
 <option id="gnu.c.compiler.option.preprocessor.def.symbols.1611902187" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 <listOptionValue builtIn="false" value="DEBUG"/>
 <listOptionValue builtIn="false" value="__CODE_RED"/>
+<listOptionValue builtIn="false" value="__REDLIB__"/>
 </option>
 <option id="gnu.c.compiler.option.misc.other.751566785" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -fno-builtin -ffunction-sections" valueType="string"/>
 <option id="gnu.c.compiler.option.preprocessor.nostdinc.2017321520" name="Do not search system directories (-nostdinc)" superClass="gnu.c.compiler.option.preprocessor.nostdinc"/>
@@ -64,7 +65,7 @@
 <tool id="com.crt.advproject.gas.lib.debug.1221856873" name="MCU Assembler" superClass="com.crt.advproject.gas.lib.debug">
 <option id="com.crt.advproject.gas.arch.1504606434" name="Architecture" superClass="com.crt.advproject.gas.arch" value="com.crt.advproject.gas.target.cm3" valueType="enumerated"/>
 <option id="com.crt.advproject.gas.thumb.1818636948" name="Thumb mode" superClass="com.crt.advproject.gas.thumb" value="true" valueType="boolean"/>
-<option id="gnu.both.asm.option.flags.crt.2056929508" name="Assembler flags" superClass="gnu.both.asm.option.flags.crt" value="-c -x assembler-with-cpp -DDEBUG -D__CODE_RED" valueType="string"/>
+<option id="gnu.both.asm.option.flags.crt.2056929508" name="Assembler flags" superClass="gnu.both.asm.option.flags.crt" value="-c -x assembler-with-cpp -DDEBUG -D__CODE_RED -D__REDLIB__ " valueType="string"/>
 <inputType id="com.crt.advproject.assembler.input.1433807015" name="Additional Assembly Source Files" superClass="com.crt.advproject.assembler.input"/>
 </tool>
 <tool id="com.crt.advproject.ar.lib.debug.1623266670" name="MCU Archiver" superClass="com.crt.advproject.ar.lib.debug"/>
@@ -448,6 +449,7 @@
 <option id="gnu.c.compiler.option.preprocessor.def.symbols.850066113" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 <listOptionValue builtIn="false" value="NDEBUG"/>
 <listOptionValue builtIn="false" value="__CODE_RED"/>
+<listOptionValue builtIn="false" value="__REDLIB__"/>
 </option>
 <option id="gnu.c.compiler.option.misc.other.1282800606" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -fno-builtin -ffunction-sections" valueType="string"/>
 <option id="gnu.c.compiler.option.include.paths.847963755" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
@@ -460,7 +462,7 @@
 <tool id="com.crt.advproject.gas.lib.release.471161591" name="MCU Assembler" superClass="com.crt.advproject.gas.lib.release">
 <option id="com.crt.advproject.gas.arch.1685902725" name="Architecture" superClass="com.crt.advproject.gas.arch" value="com.crt.advproject.gas.target.cm3" valueType="enumerated"/>
 <option id="com.crt.advproject.gas.thumb.1536531896" name="Thumb mode" superClass="com.crt.advproject.gas.thumb" value="true" valueType="boolean"/>
-<option id="gnu.both.asm.option.flags.crt.989938811" name="Assembler flags" superClass="gnu.both.asm.option.flags.crt" value="-c -x assembler-with-cpp -DNDEBUG -D__CODE_RED" valueType="string"/>
+<option id="gnu.both.asm.option.flags.crt.989938811" name="Assembler flags" superClass="gnu.both.asm.option.flags.crt" value="-c -x assembler-with-cpp -DNDEBUG -D__CODE_RED -D__REDLIB__ " valueType="string"/>
 <inputType id="com.crt.advproject.assembler.input.422691442" name="Additional Assembly Source Files" superClass="com.crt.advproject.assembler.input"/>
 </tool>
 <tool id="com.crt.advproject.ar.lib.release.685209362" name="MCU Archiver" superClass="com.crt.advproject.ar.lib.release"/>
@@ -822,10 +824,7 @@
 <projectStorage>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&#13;
 &lt;TargetConfig&gt;&#13;
 &lt;Properties property_0="" property_1="" property_2="" property_3="NXP" property_4="LPC1751" property_count="5" version="1"/&gt;&#13;
-&lt;infoList vendor="NXP"&gt;&#13;
-&lt;info chip="LPC1751" match_id="0x00001110,0x25001118" name="LPC1751"&gt;&#13;
-&lt;chip&gt;&#13;
-&lt;name&gt;LPC1751&lt;/name&gt;&#13;
+&lt;infoList vendor="NXP"&gt;&lt;info chip="LPC1751" match_id="0x00001110,0x25001118" name="LPC1751"&gt;&lt;chip&gt;&lt;name&gt;LPC1751&lt;/name&gt;&#13;
 &lt;family&gt;LPC17xx&lt;/family&gt;&#13;
 &lt;vendor&gt;NXP (formerly Philips)&lt;/vendor&gt;&#13;
 &lt;reset board="None" core="Real" sys="Real"/&gt;&#13;
@@ -878,8 +877,7 @@
 &lt;peripheralInstance derived_from="LPC17_CANWAKESLEEP" determined="infoFile" id="CANWAKESLEEP" location="0x400FC110"/&gt;&#13;
 &lt;peripheralInstance derived_from="LPC17_CANCON" determined="infoFile" enable="SYSCTL.PCONP.PCCAN1&amp;amp;0x1" id="CANCON1" location="0x40044000"/&gt;&#13;
 &lt;/chip&gt;&#13;
-&lt;processor&gt;&#13;
-&lt;name gcc_name="cortex-m3"&gt;Cortex-M3&lt;/name&gt;&#13;
+&lt;processor&gt;&lt;name gcc_name="cortex-m3"&gt;Cortex-M3&lt;/name&gt;&#13;
 &lt;family&gt;Cortex-M&lt;/family&gt;&#13;
 &lt;/processor&gt;&#13;
 &lt;link href="nxp_lpcxxxx_peripheral.xme" show="embed" type="simple"/&gt;&#13;
