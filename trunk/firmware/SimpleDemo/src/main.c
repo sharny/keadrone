@@ -22,7 +22,7 @@ extern volatile uint8_t UART3Buffer[BUFSIZE];
 #define mainLED_BIT 						( 1 )
 
 /* The rate at which data is sent to the queue, specified in milliseconds. */
-#define mainQUEUE_SEND_FREQUENCY_MS			( 500 / portTICK_RATE_MS )
+#define mainQUEUE_SEND_FREQUENCY_MS			( 100 / portTICK_RATE_MS )
 
 /* The number of items the queue can hold.  This is 1 as the receive task
  will remove items as they are added, meaning the send task should always find
@@ -143,9 +143,9 @@ static void adcVoltage(void) {
 	adval = (adval >> 4) & 0x0FFF;
 
 	//Convert integer ADC value to string
-	sprintf(strbuf, "%04d", adval);
-	printf(strbuf);
-	printf("\n");
+//	sprintf(strbuf, "%04d", adval);
+//	printf(strbuf);
+//	printf("\n");
 }
 /*-----------------------------------------------------------*/
 
@@ -167,23 +167,23 @@ static void prvQueueSendTask(void *pvParameters) {
 		 The block state is specified in ticks, the constant used converts ticks
 		 to ms.  While in the blocked state this task will not consume any CPU
 		 time. */
-		vTaskDelayUntil(&xNextWakeTime, mainQUEUE_SEND_FREQUENCY_MS );
+//		vTaskDelayUntil(&xNextWakeTime, mainQUEUE_SEND_FREQUENCY_MS );
 
 		/* Send to the queue - causing the queue receive task to flash its LED.
 		 0 is used as the block time so the sending operation will not block -
 		 it shouldn't need to block as the queue should always be empty at this
 		 point in the code. */
-		xQueueSend( xQueue, &ulValueToSend, 0 );
+//		xQueueSend( xQueue, &ulValueToSend, 0 );
 
-		adcVoltage();
+//		adcVoltage();
 
 		//		if ( UART3Count != 0 )
 		//		{
 		//		LPC_UART3->IER = IER_THRE | IER_RLS; /* Disable RBR */
-		value++;
-		sprintf(buffer, "%d -", value);
-		UARTSend(3, (uint8_t *) buffer, strlen(buffer));//UART3Count );
-		UARTSend(3, (uint8_t *) welcomeMsg, strlen(welcomeMsg));//UART3Count );
+	//	value++;
+		//sprintf(buffer, "%d -", value);
+		//UARTSend(3, (uint8_t *) buffer, strlen(buffer));//UART3Count );
+		//UARTSend(3, (uint8_t *) welcomeMsg, strlen(welcomeMsg));//UART3Count );
 		//UART3Count = 0;
 		//		LPC_UART3->IER = IER_THRE | IER_RLS | IER_RBR; /* Re-enable RBR */
 		//		}

@@ -10,6 +10,8 @@
 #include "task.h"
 #include "queue.h"
 
+#include "uart.h"
+
 #define SSP_CHANNEL LPC_SSP0
 #define PORT_CS	LPC_GPIO0
 #define PIN_MASK_CS (1<<16)
@@ -131,27 +133,96 @@ int main_spi(void) {
 		LPC_PINCON->PINSEL1 |= 0x2 << 4; //MOSI0 p0.18
 		LPC_PINCON->PINSEL1 |= 0x2 << 2; //MISO0 p0.17
 
+		LPC_PINCON->PINMODE1 |= 0x3 << 4;// pull down mosi pin.
+		LPC_PINCON->PINMODE1 |= 0x2 << 2;// pull down mosi pin.
+
 		PORT_CS->FIODIR |= 1 << 16; //P0.16 as CSn (acc. meter)
 
 		SSP_ConfigStructInit(&sspChannelConfig);
 		SSP_Init(SSP_CHANNEL, &sspChannelConfig);
 		SSP_Cmd(SSP_CHANNEL, ENABLE);
-		while (init_BMA180(0x01, 0x00) != 0) {
-			printf("Error connecting to BMA180\n");
+		while (init_BMA180(0x02, 7) != 0) {
+			//printf("Error connecting to BMA180\n");
+			printf("E\n");
 			delay_ms(1000);
 		}
 	}
 	char temp = 0;
 	signed short temp2;
 
+	static char buffer[10];
+
+	static char lsb;
+
 	while (temp != 1) {
 		temp = read(ACCXLSB) & 0x01;
 	}
+	lsb = temp;
+
 	temp = read(ACCXMSB);
-	temp2 = temp << 8;
-	temp2 |= read(ACCXLSB);
+	temp2 = (signed short) temp << 8;
+	temp2 |= lsb;//read(ACCXLSB);
 	temp2 = temp2 >> 2; // Get rid of two non-value bits in LSB
-	printf("%d \n", temp2);
+
+
+	if (temp2 & 1 << 14)
+	//value is negative
+	{
+		temp2 = ~temp2 & ~0xE000; // Discard neg/pos identifier
+		//printf("-%.4d,", temp2);
+		sprintf(buffer, "-%.4d,", temp2);
+
+	} else {
+		temp2 = temp2 & ~0xE000;
+		sprintf(buffer, "%.4d,", temp2);
+	}
+	UARTSend(3, (uint8_t *) buffer, strlen(buffer));//UART3Count );
+
+	while (temp != 1) {
+		temp = read(ACCYLSB) & 0x01;
+	}
+	lsb = temp;
+
+	temp = read(ACCYMSB);
+	temp2 = temp << 8;
+	temp2 |= lsb;//read(ACCYLSB);
+	temp2 = temp2 >> 2; // Get rid of two non-value bits in LSB
+
+	if (temp2 & 1 << 14)
+	//value is negative
+	{
+		temp2 = ~temp2 & ~0xE000; // discart neg/pos identifier
+		//printf("-%.4d,", temp2);
+		sprintf(buffer, "-%.4d,", temp2);
+
+	} else {
+		temp2 = temp2 & ~0xE000;
+		sprintf(buffer, "%.4d,", temp2);
+	}
+	UARTSend(3, (uint8_t *) buffer, strlen(buffer));//UART3Count );
+
+	while (temp != 1) {
+		temp = read(ACCZLSB) & 0x01;
+	}
+	lsb = temp;
+	temp = read(ACCZMSB);
+	temp2 = temp << 8;
+	temp2 |= lsb;//read(ACCZLSB);
+	temp2 = temp2 >> 2; // Get rid of two non-value bits in LSB
+
+	if (temp2 & 1 << 14)
+	//value is negative
+	{
+		temp2 = ~temp2 & ~0xE000; // discart neg/pos identifier
+		//printf("-%.4d,", temp2);
+		sprintf(buffer, "-%.4d\n", temp2);
+
+	} else {
+		temp2 = temp2 & ~0xE000;
+		sprintf(buffer, "%.4d\n", temp2);
+	}
+	UARTSend(3, (uint8_t *) buffer, strlen(buffer));//UART3Count );
+
 
 #ifdef not_used
 	//while (1) {

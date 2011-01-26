@@ -12,7 +12,8 @@ HAL_SPI/main_spi.d HAL_SPI/main_spi.o: ../HAL_SPI/main_spi.c \
   C:\Users\admin\Desktop\Keadrone\FreeRTOS_Library\include/mpu_wrappers.h \
   C:\Users\admin\Desktop\Keadrone\FreeRTOS_Library\include/task.h \
   C:\Users\admin\Desktop\Keadrone\FreeRTOS_Library\include/list.h \
-  C:\Users\admin\Desktop\Keadrone\FreeRTOS_Library\include/queue.h
+  C:\Users\admin\Desktop\Keadrone\FreeRTOS_Library\include/queue.h \
+  C:\Users\admin\Desktop\Keadrone\SimpleDemo\HAL_UART/uart.h
 
 C:\Users\admin\Desktop\Keadrone\CMSISv1p30_LPC17xx\inc/LPC17xx.h:
 
@@ -43,3 +44,5 @@ C:\Users\admin\Desktop\Keadrone\FreeRTOS_Library\include/task.h:
 C:\Users\admin\Desktop\Keadrone\FreeRTOS_Library\include/list.h:
 
 C:\Users\admin\Desktop\Keadrone\FreeRTOS_Library\include/queue.h:
+
+C:\Users\admin\Desktop\Keadrone\SimpleDemo\HAL_UART/uart.h:
