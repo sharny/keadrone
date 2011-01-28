@@ -18,4 +18,5 @@ src \
 . \
 HAL_UART \
 HAL_SPI \
+HAL_Analog \
 

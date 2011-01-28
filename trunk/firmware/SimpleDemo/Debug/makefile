@@ -12,6 +12,7 @@ RM := rm -rf
 -include src/subdir.mk
 -include HAL_UART/subdir.mk
 -include HAL_SPI/subdir.mk
+-include HAL_Analog/subdir.mk
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)

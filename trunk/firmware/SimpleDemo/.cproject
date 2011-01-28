@@ -44,6 +44,7 @@
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/SimpleDemo/HAL_UART}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/FreeRTOS_Library/include}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/FreeRTOS_Library/portable}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SimpleDemo/HAL_Analog}&quot;"/>
 </option>
 <option id="com.crt.advproject.gcc.hdrlib.591215034" name="Use headers for C library" superClass="com.crt.advproject.gcc.hdrlib" value="com.crt.advproject.gcc.hdrlib.codered" valueType="enumerated"/>
 <option id="gnu.c.compiler.option.warnings.pedantic.461415182" name="Pedantic (-pedantic)" superClass="gnu.c.compiler.option.warnings.pedantic" value="false" valueType="boolean"/>
@@ -61,7 +62,7 @@
 </tool>
 <tool id="com.crt.advproject.link.exe.debug.1881894119" name="MCU Linker" superClass="com.crt.advproject.link.exe.debug">
 <option id="com.crt.advproject.link.manage.920980770" name="Manage linker script" superClass="com.crt.advproject.link.manage" value="true" valueType="boolean"/>
-<option id="com.crt.advproject.link.gcc.hdrlib.596678266" name="Use C library" superClass="com.crt.advproject.link.gcc.hdrlib" value="com.crt.advproject.gcc.link.hdrlib.codered.semihost" valueType="enumerated"/>
+<option id="com.crt.advproject.link.gcc.hdrlib.596678266" name="Use C library" superClass="com.crt.advproject.link.gcc.hdrlib" value="com.crt.advproject.gcc.link.hdrlib.codered.nohost" valueType="enumerated"/>
 <option id="com.crt.advproject.link.arch.1062750096" name="Architecture" superClass="com.crt.advproject.link.arch" value="com.crt.advproject.link.target.cm3" valueType="enumerated"/>
 <option id="com.crt.advproject.link.thumb.410739989" name="Thumb mode" superClass="com.crt.advproject.link.thumb" value="true" valueType="boolean"/>
 <option id="com.crt.advproject.link.script.672911007" name="Linker script" superClass="com.crt.advproject.link.script" value="&quot;SimpleDemo_Debug.ld&quot;" valueType="string"/>
@@ -86,10 +87,11 @@
 </toolChain>
 </folderInfo>
 <sourceEntries>
-<entry excluding="HAL_UART|HAL_SPI|Debug|src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+<entry excluding="HAL_Analog|HAL_UART|HAL_SPI|Debug|src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 <entry excluding="HAL_SPI" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src"/>
 <entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="HAL_SPI"/>
 <entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="HAL_UART"/>
+<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="HAL_Analog"/>
 </sourceEntries>
 </configuration>
 </storageModule>
