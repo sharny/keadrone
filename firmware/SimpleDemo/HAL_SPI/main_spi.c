@@ -56,7 +56,7 @@ void write(uint8_t address, char data) {
 	char rxBuff;
 	SSP_DATA_SETUP_Type sspDataConfig;
 
-	//printf("\nWriting 0x%x to 0x%x\n", data, address);
+	printf("\nWriting 0x%x to 0x%x\n", data, address);
 
 	PORT_CS->FIOCLR |= PIN_MASK_CS; //CS low
 
@@ -143,7 +143,7 @@ int main_spi(void) {
 		SSP_Cmd(SSP_CHANNEL, ENABLE);
 		while (init_BMA180(0x02, 7) != 0) {
 			//printf("Error connecting to BMA180\n");
-			printf("E\n");
+			//printf("E\n");
 			delay_ms(1000);
 		}
 	}
@@ -223,7 +223,7 @@ int main_spi(void) {
 	}
 	UARTSend(3, (uint8_t *) buffer, strlen(buffer));//UART3Count );
 
-
+	vTaskDelay(1000);
 #ifdef not_used
 	//while (1) {
 	if (timeKeeper++ % 500000 == 0) {
