@@ -19,13 +19,15 @@
 /* The rate at which data is sent to the queue, specified in milliseconds. */
 #define delay_1ms			( 1 / portTICK_RATE_MS )
 
-static void delay_ms(uint16_t value) {
+static void delay_ms(uint16_t value)
+{
 	portTickType xNextWakeTime;
 	vTaskDelayUntil(&xNextWakeTime, (delay_1ms * value));
 
 }
 
-char read(uint8_t address) {
+char read(uint8_t address)
+{
 	//returns the contents of any 1 byte register from any address
 	//sets the MSB for every address byte (READ mode)
 
@@ -48,7 +50,8 @@ char read(uint8_t address) {
 	return rxBuff;
 }
 
-void write(uint8_t address, char data) {
+void write(uint8_t address, char data)
+{
 	//write any data byte to any single address
 	//adds a 0 to the MSB of the address byte (WRITE mode)
 
@@ -82,7 +85,8 @@ void write(uint8_t address, char data) {
 // Input: range is a 3-bit value between 0x00 and 0x06 will set the range as described in the BMA180 datasheet (pg. 27)
 // bw is a 4-bit value between 0x00 and 0x09.  Again described on pg. 27
 // Output: -1 on error, 0 on success
-int init_BMA180(uint8_t range, uint8_t bw) {
+int init_BMA180(uint8_t range, uint8_t bw)
+{
 	char temp, temp1;
 
 	// if connected correctly, ID register should be 3
@@ -115,7 +119,8 @@ int init_BMA180(uint8_t range, uint8_t bw) {
 	return 0;
 }
 
-int main_spi(void) {
+int main_spi(void)
+{
 	static int startup = FALSE;
 
 	volatile int timeKeeper = 0;
@@ -126,7 +131,8 @@ int main_spi(void) {
 	uint8_t rxBuff[5];
 	uint8_t txBuff[5];
 
-	if (startup == FALSE) {
+	if (startup == FALSE)
+	{
 		startup = TRUE;
 
 		LPC_PINCON->PINSEL0 |= 0x2 << 30; //SCK0 p0.15
@@ -141,7 +147,8 @@ int main_spi(void) {
 		SSP_ConfigStructInit(&sspChannelConfig);
 		SSP_Init(SSP_CHANNEL, &sspChannelConfig);
 		SSP_Cmd(SSP_CHANNEL, ENABLE);
-		while (init_BMA180(0x02, 7) != 0) {
+		while (init_BMA180(0x02, 7) != 0)
+		{
 			//printf("Error connecting to BMA180\n");
 			//printf("E\n");
 			delay_ms(1000);
@@ -154,7 +161,8 @@ int main_spi(void) {
 
 	static char lsb;
 
-	while (temp != 1) {
+	while (temp != 1)
+	{
 		temp = read(ACCXLSB) & 0x01;
 	}
 	lsb = temp;
@@ -172,13 +180,16 @@ int main_spi(void) {
 		//printf("-%.4d,", temp2);
 		sprintf(buffer, "-%.4d,", temp2);
 
-	} else {
+	}
+	else
+	{
 		temp2 = temp2 & ~0xE000;
 		sprintf(buffer, "%.4d,", temp2);
 	}
 	UARTSend(3, (uint8_t *) buffer, strlen(buffer));//UART3Count );
 
-	while (temp != 1) {
+	while (temp != 1)
+	{
 		temp = read(ACCYLSB) & 0x01;
 	}
 	lsb = temp;
@@ -195,13 +206,16 @@ int main_spi(void) {
 		//printf("-%.4d,", temp2);
 		sprintf(buffer, "-%.4d,", temp2);
 
-	} else {
+	}
+	else
+	{
 		temp2 = temp2 & ~0xE000;
 		sprintf(buffer, "%.4d,", temp2);
 	}
 	UARTSend(3, (uint8_t *) buffer, strlen(buffer));//UART3Count );
 
-	while (temp != 1) {
+	while (temp != 1)
+	{
 		temp = read(ACCZLSB) & 0x01;
 	}
 	lsb = temp;
@@ -217,7 +231,9 @@ int main_spi(void) {
 		//printf("-%.4d,", temp2);
 		sprintf(buffer, "-%.4d\n", temp2);
 
-	} else {
+	}
+	else
+	{
 		temp2 = temp2 & ~0xE000;
 		sprintf(buffer, "%.4d\n", temp2);
 	}
@@ -226,7 +242,8 @@ int main_spi(void) {
 	vTaskDelay(1000);
 #ifdef not_used
 	//while (1) {
-	if (timeKeeper++ % 500000 == 0) {
+	if (timeKeeper++ % 500000 == 0)
+	{
 		PORT_CS->FIOCLR |= PIN_MASK_CS; //CS low
 
 		sspDataConfig.length = 1;
