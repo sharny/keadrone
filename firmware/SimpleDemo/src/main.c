@@ -21,6 +21,12 @@ static void idleTask(void *pvParameters);
 static xQueueHandle xQueue = NULL;
 
 /*-----------------------------------------------------------*/
+#include "LPC17xx.h"
+void i2cInit(void)
+{
+//	LPC_SC->PCONP |=
+//	LPC_I2C0->
+}
 
 int main(void)
 {
