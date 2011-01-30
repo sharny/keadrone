@@ -28,18 +28,16 @@ static xQueueHandle xQueue = NULL;
 /* I2STAT register meanings */
 typedef enum
 {
+	//Common
+	Mx_START = 0x08,
+	Mx_REPEATED_START = 0x10,
+	Mx_ARB_LOST = 0x38,
 	//TRANSMIT
-	MT_START = 0x08,
-	MT_REPEATED_START = 0x10,
 	MT_ACK_SLAVEADDR = 0x18,
 	MT_NACK_SLAVEADDR = 0x20,
 	MT_ACK_DATA = 0x28,
 	MT_NACK_DATA = 0x30,
-	MT_ARB_LOST = 0x38,
 	// RECEIVE STATES
-	MR_START = 0x08,
-	MR_REPEATED_START = 0x10,
-	MR_ARB_LOST = 0x38,
 	MR_ACK_SLAVEADDR = 0x40,
 	MR_NACK_SLAVEADDR = 0x48,
 	MR_ACK_DATA = 0x50,
@@ -47,25 +45,29 @@ typedef enum
 } STATES_MASTER;
 
 LPC_I2C_TypeDef *LPC_I2Cx;
+#define STARTBIT	1<<5
+#define STOPBIT		1<<4
+#define SER_INT		1<<3
+#define AA_BIT		1<<2
 
 void i2cStop(void)
 {
-	LPC_I2Cx->I2CONCLR = 1 << 3;
-	// clear the start bit
-	LPC_I2Cx->I2CONCLR = 1 << 5;
 	// stop bit, since we received NACK instead of ACK
-	LPC_I2Cx->I2CONSET = 1 << 4;
+	LPC_I2Cx->I2CONSET = STOPBIT;
+	LPC_I2Cx->I2CONCLR = SER_INT | STARTBIT;
 }
 
 void i2cStart(void)
 {
-	// clear the SI bit
-	LPC_I2Cx->I2CONCLR = 1 << 3;
 	// start data request
-	LPC_I2Cx->I2CONSET = 1 << 5; // start bit I2C
+	LPC_I2Cx->I2CONSET = STARTBIT; // start bit I2C
+
+	int reg;
+	while (!(reg & (SER_INT)))
+		reg = LPC_I2Cx->I2CONSET;
 
 	// block for capturing the start bit
-	while (MT_START != LPC_I2Cx->I2STAT && MT_REPEATED_START
+	while (Mx_START != LPC_I2Cx->I2STAT && Mx_REPEATED_START
 			!= LPC_I2Cx->I2STAT)
 		;
 }
@@ -74,25 +76,25 @@ void i2cStart(void)
 Bool i2cSendAddress(uint8_t address)
 {
 	LPC_I2Cx->I2DAT = address;
-	LPC_I2Cx->I2CONCLR = 1 << 3; // clear the SI bit, transfer will now start
+	LPC_I2Cx->I2CONCLR = SER_INT | STARTBIT | STOPBIT;
+
+	int reg;
+	while (!(reg & (SER_INT)))
+		reg = LPC_I2Cx->I2CONSET;
 
 	// block for acknowledge
 	switch (LPC_I2Cx->I2STAT)
 	{
 	case MT_NACK_SLAVEADDR:
-	case MT_ARB_LOST:
+	case Mx_ARB_LOST:
 	case MR_NACK_SLAVEADDR:
 		//case MR_ARB_LOST:
-		// stop bit
 		i2cStop();
 		return FALSE;
 		break;
 	case MT_ACK_SLAVEADDR:
 	case MR_ACK_SLAVEADDR:
 		return TRUE;
-
-		//default:
-		//loop
 	}
 
 	return TRUE;
@@ -102,43 +104,56 @@ Bool i2cSendData(uint8_t data)
 {
 	LPC_I2Cx->I2DAT = data;
 	// clear the start bit
-	LPC_I2Cx->I2CONCLR = 1 << 5 | 1 << 3;
+	LPC_I2Cx->I2CONCLR = SER_INT | STARTBIT | STOPBIT;
+
+	int reg;
+	while (!(reg & (SER_INT)))
+		reg = LPC_I2Cx->I2CONSET;
 
 	// block for acknowledge
 	switch (LPC_I2Cx->I2STAT)
 	{
 	case MT_NACK_DATA:
-	case MT_ARB_LOST:
+	case Mx_ARB_LOST:
 		i2cStop();
 		return FALSE;
 		break;
 	case MT_ACK_DATA:
 		return TRUE;
-
-		//	default:
-		//loop
 	}
 }
 void i2cStartRepeat(void)
 {
 	// (repeated) start data request
-	LPC_I2Cx->I2CONSET = 1 << 5; // start bit I2C
-	LPC_I2Cx->I2CONCLR = 1 << 3; // clear the SI bit, transfer will now start
+	LPC_I2Cx->I2CONSET = STARTBIT;
+	LPC_I2Cx->I2CONCLR = SER_INT | STOPBIT;
 
-	while (MT_START != LPC_I2Cx->I2STAT && MT_REPEATED_START
+	int reg;
+	while (!(reg & (SER_INT)))
+		reg = LPC_I2Cx->I2CONSET;
+
+	while (Mx_START != LPC_I2Cx->I2STAT && Mx_REPEATED_START
 			!= LPC_I2Cx->I2STAT)
 		;
 }
 
 Bool i2cRead(uint8_t *data)
 {
-	LPC_I2Cx->I2CONCLR = 1 << 3 | 1 << 5;
+	LPC_I2Cx->I2CONCLR = SER_INT | STOPBIT | STARTBIT;
+
+	int reg;
+	while (!(reg & (SER_INT)))
+		reg = LPC_I2Cx->I2CONSET;
 
 	// todo: time-out
 	while (LPC_I2Cx->I2STAT != MR_NACK_DATA)
-		;
+		if (LPC_I2Cx->I2STAT != MR_ACK_DATA)
+			return FALSE;
+
 	*data = LPC_I2Cx->I2DATA_BUFFER;
+	return TRUE;
 }
+
 void i2ctest(void)
 {
 
@@ -158,16 +173,27 @@ void i2ctest(void)
 
 	// PART 2
 	if (i2cSendData(0) == FALSE)
+	{
+		i2cStop();
 		return;
+	}
 
 	// PART 3
 	i2cStartRepeat();
 	if (i2cSendAddress(ITG3200_R) == FALSE)
+	{
+		i2cStop();
 		return;
+	}
 
 	// part 4
 	uint8_t rxData;
-	i2cRead(&rxData);
+	if (i2cRead(&rxData) == FALSE)
+	{
+		i2cStop();
+		return;
+	}
+
 	i2cStop();
 
 }
@@ -219,7 +245,7 @@ void i2cInit(void)
 	LPC_I2Cx->I2SCLH = 400; // see p448
 	LPC_I2Cx->I2SCLL = 400;
 
-	LPC_I2Cx->I2CONSET |= 1 << 6; // enable I2C
+	LPC_I2Cx->I2CONSET = 1 << 6; // enable I2C
 
 	while (1)
 	{
@@ -236,7 +262,7 @@ int main(void)
 	{
 		/* Start the two tasks as described in the accompanying application
 		 note. */
-		xTaskCreate( mainTask, ( signed char * ) "Rx", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL );
+		xTaskCreate( mainTask, ( signed char * ) "Rx", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY+1, NULL );
 		xTaskCreate( idleTask, ( signed char * ) "TX", (200), NULL, tskIDLE_PRIORITY, NULL );
 
 		/* Start the tasks running. */
@@ -250,6 +276,11 @@ int main(void)
 		;
 }
 /*-----------------------------------------------------------*/
+#define BUFSIZE 10
+extern volatile uint32_t I2CCount;
+extern volatile uint8_t I2CMasterBuffer[BUFSIZE];
+extern volatile uint32_t I2CCmd, I2CMasterState;
+extern volatile uint32_t I2CReadLength, I2CWriteLength;
 
 static void mainTask(void *pvParameters)
 {
@@ -265,10 +296,16 @@ static void mainTask(void *pvParameters)
 	char buffer[10];
 	int value = 0;
 
-	i2cInit();
+	//i2cInit();
+	I2CInit();
 	for (;;)
 	{
-		vTaskDelay(500);
+		I2CWriteLength = 2;
+		I2CReadLength = 2;
+		I2CMasterBuffer[0] = ITG3200_W;
+		I2CMasterBuffer[1] =  0;	//address
+		I2CEngine();
+		vTaskDelay(1500);
 		//main_spi();
 	}
 }
