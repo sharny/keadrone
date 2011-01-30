@@ -25,109 +25,150 @@ static xQueueHandle xQueue = NULL;
 #include "lpc_types.h"
 #include "lpc17xx_clkpwr.h"
 
-void i2ctest(void)
+/* I2STAT register meanings */
+typedef enum
 {
-	LPC_I2C_TypeDef *LPC_I2Cx;
-	LPC_I2Cx = LPC_I2C1;
+	//TRANSMIT
+	MT_START = 0x08,
+	MT_REPEATED_START = 0x10,
+	MT_ACK_SLAVEADDR = 0x18,
+	MT_NACK_SLAVEADDR = 0x20,
+	MT_ACK_DATA = 0x28,
+	MT_NACK_DATA = 0x30,
+	MT_ARB_LOST = 0x38,
+	// RECEIVE STATES
+	MR_START = 0x08,
+	MR_REPEATED_START = 0x10,
+	MR_ARB_LOST = 0x38,
+	MR_ACK_SLAVEADDR = 0x40,
+	MR_NACK_SLAVEADDR = 0x48,
+	MR_ACK_DATA = 0x50,
+	MR_NACK_DATA = 0x58,
+} STATES_MASTER;
 
-	typedef enum
-	{
-		//TRANSMIT
-		MT_START = 0x08,
-		MT_REPEATED_START = 0x10,
-		MT_ACK_SLAVEADDR = 0x18,
-		MT_NACK_SLAVEADDR = 0x20,
-		MT_ACK_DATA = 0x28,
-		MT_NACK_DATA = 0x30,
-		MT_ARB_LOST = 0x38,
-		// RECEIVE STATES
-		MR_START = 0x08,
-		MR_REPEATED_START = 0x10,
-		MR_ARB_LOST = 0x38,
-		MR_ACK_SLAVEADDR = 0x40,
-		MR_NACK_SLAVEADDR = 0x48,
-		MR_ACK_DATA = 0x50,
-		MR_NACK_DATA = 0x58,
-	} STATES_MASTER;
-#define ITG3200_W 0xD0
-#define ITG3200_R 0xD1
-	do
-	{
-		// clear the start bit
-		LPC_I2Cx->I2CONCLR = 1 << 5;
-		// clear the SI bit
-		LPC_I2Cx->I2CONCLR = 1 << 3;
+LPC_I2C_TypeDef *LPC_I2Cx;
 
-		// start data request
-		LPC_I2Cx->I2CONSET = 1 << 5; // start bit I2C
-		while (MT_START != LPC_I2Cx->I2STAT)
-			// wait for capturing the start bit
-			;
-
-		LPC_I2Cx->I2DAT = ITG3200_W;
-		LPC_I2Cx->I2CONCLR = 1 << 3; // clear the SI bit, transfer will now start
-
-		// wait for acknowledge
-		while (LPC_I2Cx->I2STAT != MT_ACK_SLAVEADDR)
-			if (LPC_I2Cx->I2STAT == MT_NACK_SLAVEADDR)
-			{
-				// stop bit, since we received NACK instead of ACK
-				LPC_I2Cx->I2CONSET = 1 << 4;
-				break;
-			}
-			else if (LPC_I2Cx->I2STAT == MT_ARB_LOST)
-				return;
-	} while (LPC_I2Cx->I2STAT != MT_ACK_SLAVEADDR);
-
-	// PART 2
+void i2cStop(void)
+{
+	LPC_I2Cx->I2CONCLR = 1 << 3;
 	// clear the start bit
 	LPC_I2Cx->I2CONCLR = 1 << 5;
-	LPC_I2Cx->I2DAT = 0;//reg address 0
+	// stop bit, since we received NACK instead of ACK
+	LPC_I2Cx->I2CONSET = 1 << 4;
+}
+
+void i2cStart(void)
+{
+	// clear the SI bit
+	LPC_I2Cx->I2CONCLR = 1 << 3;
+	// start data request
+	LPC_I2Cx->I2CONSET = 1 << 5; // start bit I2C
+
+	// block for capturing the start bit
+	while (MT_START != LPC_I2Cx->I2STAT && MT_REPEATED_START
+			!= LPC_I2Cx->I2STAT)
+		;
+}
+
+/* Send after start bit, not repeated start */
+Bool i2cSendAddress(uint8_t address)
+{
+	LPC_I2Cx->I2DAT = address;
 	LPC_I2Cx->I2CONCLR = 1 << 3; // clear the SI bit, transfer will now start
 
-	// wait for acknowledge
-	while (LPC_I2Cx->I2STAT != MT_ACK_DATA)
-		if (LPC_I2Cx->I2STAT == MT_NACK_DATA)
-		{
-			// stop bit, since we received NACK instead of ACK
-			LPC_I2Cx->I2CONSET = 1 << 4;
-			break;
-		}
+	// block for acknowledge
+	switch (LPC_I2Cx->I2STAT)
+	{
+	case MT_NACK_SLAVEADDR:
+	case MT_ARB_LOST:
+	case MR_NACK_SLAVEADDR:
+		//case MR_ARB_LOST:
+		// stop bit
+		i2cStop();
+		return FALSE;
+		break;
+	case MT_ACK_SLAVEADDR:
+	case MR_ACK_SLAVEADDR:
+		return TRUE;
 
-	// PART 3
+		//default:
+		//loop
+	}
+
+	return TRUE;
+}
+
+Bool i2cSendData(uint8_t data)
+{
+	LPC_I2Cx->I2DAT = data;
+	// clear the start bit
+	LPC_I2Cx->I2CONCLR = 1 << 5 | 1 << 3;
+
+	// block for acknowledge
+	switch (LPC_I2Cx->I2STAT)
+	{
+	case MT_NACK_DATA:
+	case MT_ARB_LOST:
+		i2cStop();
+		return FALSE;
+		break;
+	case MT_ACK_DATA:
+		return TRUE;
+
+		//	default:
+		//loop
+	}
+}
+void i2cStartRepeat(void)
+{
 	// (repeated) start data request
 	LPC_I2Cx->I2CONSET = 1 << 5; // start bit I2C
 	LPC_I2Cx->I2CONCLR = 1 << 3; // clear the SI bit, transfer will now start
 
-	while (MT_REPEATED_START != LPC_I2Cx->I2STAT)
-		// wait for capturing the start bti
+	while (MT_START != LPC_I2Cx->I2STAT && MT_REPEATED_START
+			!= LPC_I2Cx->I2STAT)
 		;
+}
 
-	LPC_I2Cx->I2DAT = ITG3200_R;
-	LPC_I2Cx->I2CONCLR = 1 << 3;
-	// clear the start bit
-	LPC_I2Cx->I2CONCLR = 1 << 5;
+Bool i2cRead(uint8_t *data)
+{
+	LPC_I2Cx->I2CONCLR = 1 << 3 | 1 << 5;
 
-	// wait for data to receive from slave
-	while (LPC_I2Cx->I2STAT != MR_ACK_SLAVEADDR)
-		;
-
-	// part 4
-	LPC_I2Cx->I2CONCLR = 1 << 3;
-	// clear the start bit
-	LPC_I2Cx->I2CONCLR = 1 << 5;
-
+	// todo: time-out
 	while (LPC_I2Cx->I2STAT != MR_NACK_DATA)
 		;
-	uint8_t rxData;
-	rxData = LPC_I2Cx->I2DATA_BUFFER;
+	*data = LPC_I2Cx->I2DATA_BUFFER;
+}
+void i2ctest(void)
+{
 
-	// stop bit, since we received NACK instead of ACK
-	LPC_I2Cx->I2CONSET = 1 << 4;
+#define ITG3200_W 0xD0
+#define ITG3200_R 0xD1
+	Bool eStatus;
+	uint16_t retries = 0;
+	do
+	{
+		i2cStart();
+		eStatus = i2cSendAddress(ITG3200_W);
+
+		if (retries++ == 3)
+			return;
+		// automatic retry if no ACK from slave
+	} while (eStatus == FALSE);
+
+	// PART 2
+	if (i2cSendData(0) == FALSE)
+		return;
+
+	// PART 3
+	i2cStartRepeat();
+	if (i2cSendAddress(ITG3200_R) == FALSE)
+		return;
+
 	// part 4
-	LPC_I2Cx->I2CONCLR = 1 << 3;
-	// clear the start bit
-	LPC_I2Cx->I2CONCLR = 1 << 5;
+	uint8_t rxData;
+	i2cRead(&rxData);
+	i2cStop();
 
 }
 
@@ -173,7 +214,6 @@ void i2cInit(void)
 	LPC_PINCON->PINMODE0 |= 0x2 << 0; // pin has neither pull-up nor pull-down.
 	LPC_PINCON->PINMODE0 |= 0x2 << 2; // pin has neither pull-up nor pull-down.
 
-	LPC_I2C_TypeDef *LPC_I2Cx;
 	LPC_I2Cx = LPC_I2C1;
 
 	LPC_I2Cx->I2SCLH = 400; // see p448
