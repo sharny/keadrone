@@ -2,7 +2,7 @@
  * GENERATED FILE - DO NOT EDIT
  * (C) Code Red Technologies Ltd, 2008-9
  * Generated linker script include file for 
- * (created from LinkMemoryTemplate (LPCXpresso v3.6.0 [Build 253] [13/12/2010] ) on Sat Jan 29 11:16:22 CET 2011)
+ * (created from LinkMemoryTemplate (LPCXpresso v3.6.0 [Build 253] [13/12/2010] ) on Sun Jan 30 10:29:07 CET 2011)
 */
 
 MEMORY
