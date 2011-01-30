@@ -125,8 +125,8 @@ Bool i2cSendData(uint8_t data)
 void i2cStartRepeat(void)
 {
 	// (repeated) start data request
-	LPC_I2Cx->I2CONSET = STARTBIT;
-	LPC_I2Cx->I2CONCLR = SER_INT | STOPBIT;
+	//LPC_I2Cx->I2CONSET = STARTBIT;
+	LPC_I2Cx->I2CONCLR = SER_INT | STOPBIT | STARTBIT;
 
 	int reg;
 	while (!(reg & (SER_INT)))
@@ -262,8 +262,8 @@ int main(void)
 	{
 		/* Start the two tasks as described in the accompanying application
 		 note. */
-		xTaskCreate( mainTask, ( signed char * ) "Rx", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY+1, NULL );
-		xTaskCreate( idleTask, ( signed char * ) "TX", (200), NULL, tskIDLE_PRIORITY, NULL );
+		xTaskCreate( mainTask, ( signed char * ) "Rx", (200), NULL, tskIDLE_PRIORITY+1, NULL );
+		xTaskCreate( idleTask, ( signed char * ) "TX", (100), NULL, tskIDLE_PRIORITY, NULL );
 
 		/* Start the tasks running. */
 		vTaskStartScheduler();
@@ -300,12 +300,36 @@ static void mainTask(void *pvParameters)
 	I2CInit();
 	for (;;)
 	{
+		int16_t value;
 		I2CWriteLength = 2;
-		I2CReadLength = 2;
+		I2CReadLength = 1;
 		I2CMasterBuffer[0] = ITG3200_W;
-		I2CMasterBuffer[1] =  0;	//address
+		I2CMasterBuffer[1] = 29; //address
+		I2CMasterBuffer[2] = ITG3200_R;
 		I2CEngine();
-		vTaskDelay(1500);
+		value = I2CMasterBuffer[3] << 8;
+
+		I2CWriteLength = 2;
+		I2CReadLength = 1;
+		I2CMasterBuffer[0] = ITG3200_W;
+		I2CMasterBuffer[1] = 30; //address
+		I2CMasterBuffer[2] = ITG3200_R;
+		I2CEngine();
+		value |= I2CMasterBuffer[3];
+
+		if (value & 1 << 15)
+		{
+			//negative value
+			value = ~(value);
+			value &= (uint16_t) 0x7FF;
+			printf("-%d\n", value);
+		}
+		else
+		{
+			printf("%d\n", value);
+		}
+
+		vTaskDelay(1);
 		//main_spi();
 	}
 }
@@ -322,13 +346,14 @@ static void idleTask(void *pvParameters)
 	for (;;)
 	{
 		uint32_t ulLEDState;
-
+#ifdef disabled
 		/* Obtain the current P0 state. */
 		ulLEDState = LPC_GPIO1->FIOPIN;
 
 		/* Turn the LED off if it was on, and on if it was off. */
 		LPC_GPIO1->FIOCLR = ulLEDState & (1 << 1);
 		LPC_GPIO1->FIOSET = ((~ulLEDState) & (1 << 1));
+#endif
 		vTaskDelay(500);
 	}
 }

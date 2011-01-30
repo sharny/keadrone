@@ -9,7 +9,7 @@
 
 // Include stdio.h to pull in __REDLIB_INTERFACE_VERSION__
 #include <stdio.h>
-
+#ifdef SEMIHOST_ENABLED
 #if (__REDLIB_INTERFACE_VERSION__ >= 20000)
 // We are using new Redlib_v2 semihosting interface
 	#define WRITEFUNC __sys_write
@@ -48,4 +48,4 @@ int READFUNC (void)
 //	char c = UART0_Getchar();
 //	return (int)c;
 }
-
+#endif

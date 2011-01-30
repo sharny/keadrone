@@ -13,7 +13,7 @@
 #include "i2c.h"
 #include "lpc17xx_clkpwr.h"
 
-volatile uint32_t I2CMasterState = I2C_IDLE;
+volatile STATES_I2C I2CMasterState = I2C_IDLE;
 volatile uint32_t I2CSlaveState = I2C_IDLE;
 
 volatile uint32_t I2CCmd;
@@ -137,7 +137,7 @@ void I2C1_IRQHandler(void)
 		break;
 
 	case MR_ACK_SLAVEADDR: /* Master Receive, SLA_R has been sent */
-		LPC_I2Cx->I2CONSET = I2CONSET_AA; /* assert ACK after data is received */
+		//LPC_I2Cx->I2CONSET = I2CONSET_AA; /* assert ACK after data is received */
 		LPC_I2Cx->I2CONCLR = I2CONCLR_SIC;
 		break;
 
@@ -153,8 +153,9 @@ void I2C1_IRQHandler(void)
 		{
 			RdIndex = 0;
 			I2CMasterState = DATA_NACK;
+			LPC_I2Cx->I2CONSET = I2CONSET_STO; /* Set Stop flag */
 		}
-		LPC_I2Cx->I2CONSET = I2CONSET_AA; /* assert ACK after data is received */
+		//LPC_I2Cx->I2CONSET = I2CONSET_AA; /* assert ACK after data is received */
 		LPC_I2Cx->I2CONCLR = I2CONCLR_SIC;
 		break;
 

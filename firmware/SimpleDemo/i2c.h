@@ -7,7 +7,7 @@
  *   History
  *   2009.05.26  ver 1.00    Prelimnary version, first Release
  *
-******************************************************************************/
+ ******************************************************************************/
 #ifndef __I2C_H 
 #define __I2C_H
 
@@ -26,12 +26,15 @@
 
 #define RD_BIT			0x01
 
-#define I2C_IDLE			0
-#define I2C_STARTED			1
-#define I2C_RESTARTED		2
-#define I2C_REPEATED_START	3
-#define DATA_ACK			4
-#define DATA_NACK			5
+typedef enum
+{
+	I2C_IDLE,
+	I2C_STARTED,
+	I2C_RESTARTED,
+	I2C_REPEATED_START,
+	DATA_ACK,
+	DATA_NACK,
+} STATES_I2C;
 
 #define I2CONSET_I2EN		0x00000040  /* I2C Control Set Register */
 #define I2CONSET_AA			0x00000004
@@ -49,13 +52,12 @@
 #define I2SCLH_SCLH			0x00000080  /* I2C SCL Duty Cycle High Reg */
 #define I2SCLL_SCLL			0x00000080  /* I2C SCL Duty Cycle Low Reg */
 
-
-extern void I2C0_IRQHandler( void );
-extern uint32_t I2CInit( uint32_t I2cMode );
-extern uint32_t I2CStart( void );
-extern uint32_t I2CStop( void );
-extern uint32_t I2CEngine( void );
+extern void I2C0_IRQHandler(void);
+extern uint32_t I2CInit(uint32_t I2cMode);
+extern uint32_t I2CStart(void);
+extern uint32_t I2CStop(void);
+extern uint32_t I2CEngine(void);
 #endif /* end __I2C_H */
 /****************************************************************************
-**                            End Of File
-*****************************************************************************/
+ **                            End Of File
+ *****************************************************************************/
