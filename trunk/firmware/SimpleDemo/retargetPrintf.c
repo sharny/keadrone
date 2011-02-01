@@ -9,6 +9,8 @@
 
 // Include stdio.h to pull in __REDLIB_INTERFACE_VERSION__
 #include <stdio.h>
+#include "type.h"
+#define SEMIHOST_ENABLED
 #ifdef SEMIHOST_ENABLED
 #if (__REDLIB_INTERFACE_VERSION__ >= 20000)
 // We are using new Redlib_v2 semihosting interface
@@ -30,10 +32,11 @@
 int WRITEFUNC (int iFileHandle, char *pcBuffer, int iLength)
 {
 	unsigned int i;
-	for (i = 0; i<iLength; i++)
-	{
+	//for (i = 0; i<iLength; i++)
+	//{
+		UARTSend(3, (uint8_t *) pcBuffer, iLength);
 //		UART0_Sendchar(pcBuffer[i]); // print each character
-	}
+	//}
 	return iLength;
 }
 

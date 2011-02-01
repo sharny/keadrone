@@ -48,4 +48,7 @@
 #define BWMASK 0xF0
 #define BWSHIFT 4
 
+// interrupt setting
+#define NEW_DATA_INT_SHIFT	1
+
 #endif /* BMA180_H_ */
