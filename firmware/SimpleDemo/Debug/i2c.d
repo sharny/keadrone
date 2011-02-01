@@ -1,12 +1,10 @@
-HAL_SPI/lpc17xx_ssp.d HAL_SPI/lpc17xx_ssp.o: ../HAL_SPI/lpc17xx_ssp.c \
-  ../HAL_SPI/lpc17xx_ssp.h \
+i2c.d i2c.o: ../i2c.c \
   C:\Users\admin\Desktop\Keadrone\CMSISv1p30_LPC17xx\inc/LPC17xx.h \
   C:\Users\admin\Desktop\Keadrone\CMSISv1p30_LPC17xx\inc/core_cm3.h \
   C:\Users\admin\Desktop\Keadrone\CMSISv1p30_LPC17xx\inc/system_LPC17xx.h \
-  ../HAL_SPI/lpc_types.h ../HAL_SPI/lpc17xx_clkpwr.h \
-  ../HAL_SPI/lpc17xx_libcfg_default.h
-
-../HAL_SPI/lpc17xx_ssp.h:
+  ../i2c.h \
+  C:\Users\admin\Desktop\Keadrone\SimpleDemo\HAL_SPI/lpc17xx_clkpwr.h \
+  C:\Users\admin\Desktop\Keadrone\SimpleDemo\HAL_SPI/lpc_types.h
 
 C:\Users\admin\Desktop\Keadrone\CMSISv1p30_LPC17xx\inc/LPC17xx.h:
 
@@ -14,8 +12,8 @@ C:\Users\admin\Desktop\Keadrone\CMSISv1p30_LPC17xx\inc/core_cm3.h:
 
 C:\Users\admin\Desktop\Keadrone\CMSISv1p30_LPC17xx\inc/system_LPC17xx.h:
 
-../HAL_SPI/lpc_types.h:
+../i2c.h:
 
-../HAL_SPI/lpc17xx_clkpwr.h:
+C:\Users\admin\Desktop\Keadrone\SimpleDemo\HAL_SPI/lpc17xx_clkpwr.h:
 
-../HAL_SPI/lpc17xx_libcfg_default.h:
+C:\Users\admin\Desktop\Keadrone\SimpleDemo\HAL_SPI/lpc_types.h:
