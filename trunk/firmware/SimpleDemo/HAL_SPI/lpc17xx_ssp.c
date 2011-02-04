@@ -214,7 +214,7 @@ void SSP_ConfigStructInit(SSP_CFG_Type *SSP_InitStruct)
 {
 	SSP_InitStruct->CPHA = SSP_CPHA_SECOND;
 	SSP_InitStruct->CPOL = SSP_CPOL_LO;
-	SSP_InitStruct->ClockRate = 1000000;
+	SSP_InitStruct->ClockRate = 10000000;
 	SSP_InitStruct->Databit = SSP_DATABIT_8;
 	SSP_InitStruct->Mode = SSP_MASTER_MODE;
 	SSP_InitStruct->FrameFormat = SSP_FRAME_SPI;
@@ -572,6 +572,72 @@ int32_t SSP_ReadWrite(LPC_SSP_TypeDef *SSPx, SSP_DATA_SETUP_Type *dataCfg,
 	}
 
 	return (-1);
+}
+
+/*********************************************************************//**
+ * @brief 		SSP Read write data function
+ * @param[in]	SSPx 	Pointer to SSP peripheral, should be
+ * 						- LPC_SSP0: SSP0 peripheral
+ * 						- LPC_SSP1: SSP1 peripheral
+ * @param[in]	dataCfg	Pointer to a SSP_DATA_SETUP_Type structure that
+ * 						contains specified information about transmit
+ * 						data configuration.
+ * @return 		Actual Data length has been transferred in polling mode.
+ * 				In interrupt mode, always return (0)
+ * 				Return (-1) if error.
+ * Note: This function can be used in both master and slave mode.
+ ***********************************************************************/
+int32_t SSP_ReadWriteWp(LPC_SSP_TypeDef *SSPx, SSP_DATA_SETUP_Type *dataCfg)
+{
+	uint8_t *rdata8;
+	uint8_t *wdata8;
+	uint16_t *rdata16;
+	uint16_t *wdata16;
+	uint32_t stat;
+	uint32_t tmp;
+	int32_t dataword;
+
+	dataCfg->rx_cnt = 0;
+	dataCfg->tx_cnt = 0;
+	dataCfg->status = 0;
+
+	/* Clear all remaining data in RX FIFO */
+	while (SSPx->SR & SSP_SR_RNE)
+	{
+		tmp = (uint32_t) SSP_ReceiveData(SSPx);
+	}
+
+	// Clear status
+	SSPx->ICR = SSP_ICR_BITMASK;
+
+	rdata8 = (uint8_t *) dataCfg->rx_data;
+	wdata8 = (uint8_t *) dataCfg->tx_data;
+
+	while ((dataCfg->tx_cnt != dataCfg->length))
+	{
+		//	if ((SSPx->SR & SSP_SR_TNF) && (dataCfg->tx_cnt != dataCfg->length))
+		//{
+
+		SSP_SendData(SSPx, *wdata8);
+		wdata8++;
+		dataCfg->tx_cnt++;
+		//	}
+	}
+
+	// Check for any data available in RX FIFO
+	while ((SSPx->SR & SSP_SR_RNE) && (dataCfg->rx_cnt != dataCfg->length))
+	{
+		// Read data from SSP data
+		tmp = SSP_ReceiveData(SSPx);
+
+		// Store data to destination
+
+		*(rdata8) = (uint8_t) tmp;
+		rdata8++;
+
+		// Increase counter
+		dataCfg->rx_cnt++;
+	}
 }
 
 /*********************************************************************//**

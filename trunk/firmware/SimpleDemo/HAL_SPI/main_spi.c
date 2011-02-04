@@ -65,7 +65,7 @@ static void bmaReadMultiple(uint8_t address, uint8_t *data, uint8_t len)
 	sspDataConfig.tx_data = &address;
 	sspDataConfig.rx_data = &rxBuff;
 
-	SSP_ReadWrite(SSP_CHANNEL, &sspDataConfig, SSP_TRANSFER_POLLING);
+	SSP_ReadWriteWp(SSP_CHANNEL, &sspDataConfig);//, SSP_TRANSFER_POLLING);
 	static uint8_t counter;
 	for (counter = 0; counter < len; counter++)
 	{
@@ -188,7 +188,7 @@ struct
 	INT_16 X;
 	INT_16 Y;
 	INT_16 Z;
-	INT_16 temp;
+	uint8_t temp;
 } acc;
 
 int spiPoll(void)
@@ -211,7 +211,7 @@ int spiPoll(void)
 	acc.Z |= (uint16_t) regData[5] << 8;
 	acc.Z = acc.Z >> 2; // Get rid of two non-value bits in LSB
 
-	acc.temp = regData[6];
+	acc.temp = (uint8_t) regData[6];
 	/*	static uint16_t counter = 0;
 	 if (counter++ == 1000)
 	 {
@@ -224,6 +224,7 @@ int spiPoll(void)
 
 void EINT3_IRQHandler(void)
 {
-	spiPoll();
 	LPC_GPIOINT->IO0IntClr = 1 << 8;
+	spiPoll();
+
 }
