@@ -154,35 +154,6 @@ void gpioIntInit(void)
 	NVIC_EnableIRQ(EINT3_IRQn);
 }
 
-void spiInit(void)
-{
-	SSP_CFG_Type sspChannelConfig;
-	SSP_DATA_SETUP_Type sspDataConfig;
-
-	LPC_PINCON->PINSEL0 |= 0x2 << 30; //SCK0 p0.15
-	LPC_PINCON->PINSEL1 |= 0x2 << 4; //MOSI0 p0.18
-	LPC_PINCON->PINSEL1 |= 0x2 << 2; //MISO0 p0.17
-
-	LPC_PINCON->PINMODE1 |= 0x3 << 4;// pull down mosi pin.
-	LPC_PINCON->PINMODE1 |= 0x2 << 2;// pull down mosi pin.
-
-	PORT_CS->FIODIR |= 1 << 16; //P0.16 as CSn (acc. meter)
-
-	// init BMA interrupt pin
-	// POR VALUE IS ALREADY INPUT
-
-	SSP_ConfigStructInit(&sspChannelConfig);
-	SSP_Init(SSP_CHANNEL, &sspChannelConfig);
-	SSP_Cmd(SSP_CHANNEL, ENABLE);
-	while (bmaInit(0x02, 6) == FALSE)
-	{
-		printf("BMA180: Error communication\n");
-		delay_ms(5);
-	}
-	printf("BMA180: Connected\n");
-
-	gpioIntInit();
-}
 struct
 {
 	INT_16 X;
@@ -222,9 +193,47 @@ int spiPoll(void)
 	return 0;
 }
 
+void spiInit(void)
+{
+	SSP_CFG_Type sspChannelConfig;
+	SSP_DATA_SETUP_Type sspDataConfig;
+
+	LPC_PINCON->PINSEL0 |= 0x2 << 30; //SCK0 p0.15
+	LPC_PINCON->PINSEL1 |= 0x2 << 4; //MOSI0 p0.18
+	LPC_PINCON->PINSEL1 |= 0x2 << 2; //MISO0 p0.17
+
+	LPC_PINCON->PINMODE1 |= 0x3 << 4;// pull down mosi pin.
+	LPC_PINCON->PINMODE1 |= 0x2 << 2;// pull down mosi pin.
+
+	PORT_CS->FIODIR |= 1 << 16; //P0.16 as CSn (acc. meter)
+
+	// init BMA interrupt pin
+	// POR VALUE IS ALREADY INPUT
+
+	SSP_ConfigStructInit(&sspChannelConfig);
+	SSP_Init(SSP_CHANNEL, &sspChannelConfig);
+	SSP_Cmd(SSP_CHANNEL, ENABLE);
+	while (bmaInit(0x02, 6) == FALSE)
+	{
+		printf("BMA180: Error communication\n");
+		delay_ms(5);
+	}
+	printf("BMA180: Connected\n");
+
+	gpioIntInit();
+	spiPoll();
+}
 void EINT3_IRQHandler(void)
 {
-	LPC_GPIOINT->IO0IntClr = 1 << 8;
-	spiPoll();
-
+	// only rising edge of Acc. meter is usefull and enabled.
+	if (LPC_GPIOINT->IO0IntStatR & (1 << 8)) // GPIO 0.8
+	{
+		LPC_GPIOINT->IO0IntClr = 1 << 8;
+		spiPoll();
+	}
+	else if (LPC_GPIOINT->IO0IntStatR & (1 << 7)) //GPIO 0.7
+	{
+		LPC_GPIOINT->IO0IntClr = 1 << 7;
+	}
 }
+
