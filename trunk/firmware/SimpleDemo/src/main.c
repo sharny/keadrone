@@ -66,14 +66,38 @@ static void mainTask(void *pvParameters)
 	CLKPWR_ConfigPPWR(CLKPWR_PCONP_PCGPIO, ENABLE);
 	spiInit();
 	I2CInit();
-	spiPoll();
-	for (;;)
-	{
-			//spiPoll();
-/*
 #define ITG3200_W 0xD0
 #define ITG3200_R 0xD1
-		int16_t value;
+	int16_t value;
+	/* Configuration... ****************************/
+	// write register 22
+	I2CWriteLength = 2;
+	I2CReadLength = 0;
+	I2CMasterBuffer[0] = ITG3200_W;
+	I2CMasterBuffer[1] = 22; //address
+	I2CMasterBuffer[2] = 0x18; // must be done for proper operation
+	I2CEngine();
+
+	// write register 23 (interrupts)
+	I2CWriteLength = 2;
+	I2CReadLength = 0;
+	I2CMasterBuffer[0] = ITG3200_W;
+	I2CMasterBuffer[1] = 23; //address
+	I2CMasterBuffer[2] = 0x32;
+	I2CEngine();
+
+	// write register 62 (power management)
+	I2CWriteLength = 2;
+	I2CReadLength = 0;
+	I2CMasterBuffer[0] = ITG3200_W;
+	I2CMasterBuffer[1] = 62; //address
+	I2CMasterBuffer[2] = 0x1;
+	I2CEngine();
+
+	for (;;)
+	{
+
+
 		I2CWriteLength = 2;
 		I2CReadLength = 1;
 		I2CMasterBuffer[0] = ITG3200_W;
@@ -102,8 +126,8 @@ static void mainTask(void *pvParameters)
 			printf("%d\n", value);
 		}
 
-		vTaskDelay(1);
-*/
+		//vTaskDelay(1);
+
 	}
 }
 /*-----------------------------------------------------------*/
