@@ -28,11 +28,11 @@
 
 typedef struct
 {
-	uint8_t address; // i2c slave device address
-	uint8_t slaveRegister; //i2c slave device (start) register
-	Bool readData; // false if writing data, else true
-	uint8_t * buffer;
-	uint32_t bufLength;
+	volatile uint8_t address; // i2c slave device address
+	volatile uint8_t slaveRegister; //i2c slave device (start) register
+	volatile Bool readData; // false if writing data, else true
+	volatile uint8_t * buffer;
+	volatile uint32_t bufLength;
 } I2C_DATA;
 
 #define I2CONSET_I2EN		0x00000040  /* I2C Control Set Register */
@@ -48,14 +48,14 @@ typedef struct
 
 #define I2DAT_I2C			0x00000000  /* I2C Data Reg */
 #define I2ADR_I2C			0x00000000  /* I2C Slave Address Reg */
-#define I2SCLH_SCLH			0x00000080  /* I2C SCL Duty Cycle High Reg */
-#define I2SCLL_SCLL			0x00000080  /* I2C SCL Duty Cycle Low Reg */
+#define I2SCLH_SCLH			0x00000010  /* I2C SCL Duty Cycle High Reg 80=100kHz, 20=370kHz*/
+#define I2SCLL_SCLL			0x00000010  /* I2C SCL Duty Cycle Low Reg */
 
 extern void I2C0_IRQHandler(void);
 extern uint32_t I2CInit(void);
 extern uint32_t I2CStart(void);
 extern uint32_t I2CStop(void);
-extern uint32_t I2CEngine(I2C_DATA *p);
+extern uint32_t I2CEnginePolling(I2C_DATA *p);
 #endif /* end __I2C_H */
 /****************************************************************************
  **                            End Of File

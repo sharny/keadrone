@@ -109,8 +109,8 @@ void I2C1_IRQHandler(void)
 		{
 		case I2C_ADDRESS_SEND:
 			LPC_I2Cx->I2DAT = i2c->slaveRegister;
-			I2CMasterState = I2C_REG_ADD_SEND;
 			LPC_I2Cx->I2CONCLR = I2CONCLR_SIC;
+			I2CMasterState = I2C_REG_ADD_SEND;
 			break;
 
 		default:
@@ -128,7 +128,9 @@ void I2C1_IRQHandler(void)
 		// this is a read sequence
 		{
 			LPC_I2Cx->I2CONSET = I2CONSET_STA; /* Set Repeated-start flag */
+			LPC_I2Cx->I2CONCLR = I2CONCLR_SIC;
 			I2CMasterState = I2C_REPEATED_START;
+
 		}
 		else
 		// this is a write sequence
@@ -136,52 +138,20 @@ void I2C1_IRQHandler(void)
 			if (WrIndex == i2c->bufLength)
 			// buffer end reached
 			{
-				I2CMasterState = I2C_STOP_SEND;
 				LPC_I2Cx->I2CONSET = I2CONSET_STO; /* Set Stop flag */
+				LPC_I2Cx->I2CONCLR = I2CONCLR_SIC;
+				I2CMasterState = I2C_STOP_SEND;
 			}
 			else
 			{
-				I2CMasterState = I2C_WRITE_SEQ_STARTED;
 				LPC_I2Cx->I2DAT = i2c->buffer[WrIndex];
+				LPC_I2Cx->I2CONCLR = I2CONCLR_SIC;
+				I2CMasterState = I2C_WRITE_SEQ_STARTED;
 				WrIndex++;
 			}
-			LPC_I2Cx->I2CONCLR = I2CONCLR_SIC;
-		}
-#ifdef OLD
-		if (WrIndex != I2CWriteLength)
-		{
-			LPC_I2Cx->I2DAT = I2CMasterBuffer[1 + WrIndex]; /* this should be the last one */
-			WrIndex++;
-			if (WrIndex != I2CWriteLength)
-			{
-				I2CMasterState = I2C_REG_ADD_SEND;
-			}
-			else
-			{
-				I2CMasterState = DATA_NACK;
-				if (I2CReadLength != 0)
-				{
-					LPC_I2Cx->I2CONSET = I2CONSET_STA; /* Set Repeated-start flag */
-					I2CMasterState = I2C_REPEATED_START;
-				}
-			}
-		}
-		else
-		{
-			if (I2CReadLength != 0)
-			{
-				LPC_I2Cx->I2CONSET = I2CONSET_STA; /* Set Repeated-start flag */
-				I2CMasterState = I2C_REPEATED_START;
-			}
-			else
-			{
-				I2CMasterState = DATA_NACK;
-				LPC_I2Cx->I2CONSET = I2CONSET_STO; /* Set Stop flag */
-			}
+
 		}
 
-		LPC_I2Cx->I2CONCLR = I2CONCLR_SIC;
-#endif
 		break;
 
 	case MR_ACK_SLAVEADDR: /* Master Receive, SLA_R has been sent */
@@ -216,7 +186,9 @@ void I2C1_IRQHandler(void)
 		break;
 
 	case MR_NACK_DATA:
-		if ((i2c->bufLength - WrIndex) > 1)
+		i2c->buffer[WrIndex] = LPC_I2Cx->I2DAT;
+		WrIndex++;
+		if ((i2c->bufLength - WrIndex) == 0)
 		{
 			I2CMasterState = I2C_STOP_SEND;
 			LPC_I2Cx->I2CONSET = I2CONSET_STO; /* Set Stop flag */
@@ -225,22 +197,6 @@ void I2C1_IRQHandler(void)
 		else
 			I2CMasterState = I2C_FAIL;
 
-#ifdef OLD
-		I2CMasterBuffer[3 + RdIndex] = LPC_I2Cx->I2DAT;
-		RdIndex++;
-		if (RdIndex != I2CReadLength)
-		{
-			I2CMasterState = I2C_REG_ADD_SEND;
-		}
-		else
-		{
-			RdIndex = 0;
-			I2CMasterState = DATA_NACK;
-			LPC_I2Cx->I2CONSET = I2CONSET_STO; /* Set Stop flag */
-		}
-		//LPC_I2Cx->I2CONSET = I2CONSET_AA; /* assert ACK after data is received */
-		LPC_I2Cx->I2CONCLR = I2CONCLR_SIC;
-#endif
 		break;
 
 	case MT_NACK_SLAVEADDR: /* regardless, it's a NACK */
@@ -276,17 +232,7 @@ uint32_t I2CStart(void)
 	/*--- Wait until START transmitted ---*/
 	while (1)
 	{
-		if (I2CMasterState == I2C_ADDRESS_SEND)
-		{
-			retVal = TRUE;
-			break;
-		}
-		if (timeout >= MAX_TIMEOUT)
-		{
-			retVal = FALSE;
-			break;
-		}
-		timeout++;
+		return TRUE;
 	}
 	return (retVal);
 }
@@ -362,12 +308,6 @@ uint32_t I2CInit(void)
 	/*--- Reset registers ---*/
 	LPC_I2Cx->I2SCLL = I2SCLL_SCLL;
 	LPC_I2Cx->I2SCLH = I2SCLH_SCLH;
-#ifdef OLD_
-	if (I2cMode == I2CSLAVE)
-	{
-		LPC_I2Cx->I2ADR0 = LM75_ADDR;
-	}
-#endif
 
 	/* Install interrupt handler */
 	//todo: choose I2Cx
@@ -394,7 +334,7 @@ uint32_t I2CInit(void)
  **				timed out.
  **
  *****************************************************************************/
-uint32_t I2CEngine(I2C_DATA *p)
+uint32_t I2CEnginePolling(I2C_DATA *p)
 {
 	I2CMasterState = I2C_IDLE;
 	i2c = p;
@@ -409,13 +349,23 @@ uint32_t I2CEngine(I2C_DATA *p)
 	{
 		if (I2CMasterState == I2C_STOP_SEND || I2CMasterState == I2C_FAIL)
 		{
+			if (I2CMasterState == I2C_FAIL)
+				return FALSE;
+			else
+				return TRUE;
 			//I2CStop();
 			break;
 		}
 	}
 	return (TRUE);
 }
-
+uint32_t I2CEngine_FromISR(I2C_DATA *p)
+{
+	I2CMasterState = I2C_IDLE;
+	i2c = p;
+	/*--- Issue a start condition ---*/
+	LPC_I2Cx->I2CONSET = I2CONSET_STA; /* Set Start flag */
+}
 /******************************************************************************
  **                            End Of File
  ******************************************************************************/
