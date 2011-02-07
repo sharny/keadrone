@@ -13,31 +13,20 @@
 #include "i2c.h"
 #include "lpc17xx_clkpwr.h"
 
-volatile STATES_I2C I2CMasterState = I2C_IDLE;
-volatile uint32_t I2CSlaveState = I2C_IDLE;
+typedef enum
+{
+	I2C_IDLE,
+	I2C_ADDRESS_SEND,
+	I2C_RESTARTED,
+	I2C_REPEATED_START,
+	I2C_REG_ADD_SEND,
+	DATA_NACK,
+	I2C_FAIL,
+	I2C_WRITE_SEQ_STARTED,
+	I2C_STOP_SEND,
+	I2C_READ_SEQ_STARTED
+} STATES_I2C;
 
-volatile uint32_t I2CCmd;
-volatile uint32_t I2CMode;
-
-volatile uint8_t I2CMasterBuffer[BUFSIZE];
-volatile uint8_t I2CSlaveBuffer[BUFSIZE];
-volatile uint32_t I2CCount = 0;
-volatile uint32_t I2CReadLength;
-volatile uint32_t I2CWriteLength;
-
-volatile uint32_t RdIndex = 0;
-volatile uint32_t WrIndex = 0;
-LPC_I2C_TypeDef *LPC_I2Cx;
-
-/* 
- From device to device, the I2C communication protocol may vary,
- in the example below, the protocol uses repeated start to read data from or
- write to the device:
- For master read: the sequence is: STA,Addr(W),offset,RE-STA,Addr(r),data...STO
- for master write: the sequence is: STA,Addr(W),length,RE-STA,Addr(w),data...STO
- Thus, in state 8, the address is always WRITE. in state 10, the address could
- be READ or WRITE depending on the I2CCmd.
- */
 /* I2STAT register meanings */
 typedef enum
 {
@@ -56,6 +45,23 @@ typedef enum
 	MR_ACK_DATA = 0x50,
 	MR_NACK_DATA = 0x58,
 } STATES_MASTER;
+
+volatile STATES_I2C I2CMasterState = I2C_IDLE;
+
+static I2C_DATA *i2c =
+{ 0 };
+
+volatile uint32_t I2CCmd;
+
+//volatile uint8_t I2CMasterBuffer[BUFSIZE];
+volatile uint32_t I2CCount = 0;
+volatile uint32_t I2CReadLength;
+volatile uint32_t I2CWriteLength;
+
+volatile uint32_t RdIndex = 0;
+volatile uint32_t WrIndex = 0;
+LPC_I2C_TypeDef *LPC_I2Cx;
+
 /*****************************************************************************
  ** Function name:		I2C0_IRQHandler
  **
@@ -68,7 +74,8 @@ typedef enum
  *****************************************************************************/
 void I2C1_IRQHandler(void)
 {
-	STATES_MASTER StatValue;
+	// static to reduce stack of the ISR
+	static STATES_MASTER StatValue;
 
 	/* this handler deals with master read and master write only */
 	StatValue = LPC_I2Cx->I2STAT;
@@ -76,39 +83,78 @@ void I2C1_IRQHandler(void)
 	switch (StatValue)
 	{
 	case Mx_START: /* A Start condition is issued. */
-		LPC_I2Cx->I2DAT = I2CMasterBuffer[0];
+		LPC_I2Cx->I2DAT = i2c->address;
 		LPC_I2Cx->I2CONCLR = (I2CONCLR_SIC | I2CONCLR_STAC);
-		I2CMasterState = I2C_STARTED;
+		WrIndex = 0; // reset the tx/rx counter
+		I2CMasterState = I2C_ADDRESS_SEND;
 		break;
 
 	case Mx_REPEATED_START: /* A repeated started is issued */
-		if (I2CCmd == LM75_TEMP)
+		switch (I2CMasterState)
 		{
-			LPC_I2Cx->I2DAT = I2CMasterBuffer[2];
+		case I2C_REPEATED_START:
+			LPC_I2Cx->I2DAT = i2c->address | 1;
+			LPC_I2Cx->I2CONCLR = (I2CONCLR_SIC | I2CONCLR_STAC);
+			I2CMasterState = I2C_RESTARTED;
+			break;
+		default:
+			I2CMasterState = I2C_FAIL;
+			break;
 		}
-		LPC_I2Cx->I2CONCLR = (I2CONCLR_SIC | I2CONCLR_STAC);
-		I2CMasterState = I2C_RESTARTED;
+
 		break;
 
-	case MT_ACK_SLAVEADDR: /* Regardless, it's a ACK */
-		if (I2CMasterState == I2C_STARTED)
+	case MT_ACK_SLAVEADDR:
+		switch (I2CMasterState)
 		{
-			LPC_I2Cx->I2DAT = I2CMasterBuffer[1 + WrIndex];
-			WrIndex++;
-			I2CMasterState = DATA_ACK;
+		case I2C_ADDRESS_SEND:
+			LPC_I2Cx->I2DAT = i2c->slaveRegister;
+			I2CMasterState = I2C_REG_ADD_SEND;
+			LPC_I2Cx->I2CONCLR = I2CONCLR_SIC;
+			break;
+
+		default:
+			I2CMasterState = I2C_FAIL;
+			break;
 		}
-		LPC_I2Cx->I2CONCLR = I2CONCLR_SIC;
 		break;
 
-	case MT_ACK_DATA: /* Data byte has been transmitted, regardless ACK or NACK */
 	case MT_NACK_DATA:
+		I2CMasterState = I2C_FAIL;
+		break;
+	case MT_ACK_DATA: /* Data byte (or address) has been transmitted, regardless ACK */
+
+		if (i2c->readData == TRUE)
+		// this is a read sequence
+		{
+			LPC_I2Cx->I2CONSET = I2CONSET_STA; /* Set Repeated-start flag */
+			I2CMasterState = I2C_REPEATED_START;
+		}
+		else
+		// this is a write sequence
+		{
+			if (WrIndex == i2c->bufLength)
+			// buffer end reached
+			{
+				I2CMasterState = I2C_STOP_SEND;
+				LPC_I2Cx->I2CONSET = I2CONSET_STO; /* Set Stop flag */
+			}
+			else
+			{
+				I2CMasterState = I2C_WRITE_SEQ_STARTED;
+				LPC_I2Cx->I2DAT = i2c->buffer[WrIndex];
+				WrIndex++;
+			}
+			LPC_I2Cx->I2CONCLR = I2CONCLR_SIC;
+		}
+#ifdef OLD
 		if (WrIndex != I2CWriteLength)
 		{
 			LPC_I2Cx->I2DAT = I2CMasterBuffer[1 + WrIndex]; /* this should be the last one */
 			WrIndex++;
 			if (WrIndex != I2CWriteLength)
 			{
-				I2CMasterState = DATA_ACK;
+				I2CMasterState = I2C_REG_ADD_SEND;
 			}
 			else
 			{
@@ -133,21 +179,58 @@ void I2C1_IRQHandler(void)
 				LPC_I2Cx->I2CONSET = I2CONSET_STO; /* Set Stop flag */
 			}
 		}
+
 		LPC_I2Cx->I2CONCLR = I2CONCLR_SIC;
+#endif
 		break;
 
 	case MR_ACK_SLAVEADDR: /* Master Receive, SLA_R has been sent */
-		//LPC_I2Cx->I2CONSET = I2CONSET_AA; /* assert ACK after data is received */
-		LPC_I2Cx->I2CONCLR = I2CONCLR_SIC;
+		switch (I2CMasterState)
+		{
+		case I2C_RESTARTED:
+			// if we read multiple bytes, we need to assert ACK after each receive
+			if ((i2c->bufLength - WrIndex) > 1)
+				LPC_I2Cx->I2CONSET = I2CONSET_AA; /* assert ACK after data is received */
+			else
+				LPC_I2Cx->I2CONCLR = I2CONCLR_AAC;
+
+			LPC_I2Cx->I2CONCLR = I2CONCLR_SIC;
+			I2CMasterState = I2C_READ_SEQ_STARTED;
+			break;
+		default:
+			I2CMasterState = I2C_FAIL;
+			break;
+		}
 		break;
 
 	case MR_ACK_DATA: /* Data byte has been received, regardless following ACK or NACK */
+		i2c->buffer[WrIndex] = LPC_I2Cx->I2DAT;
+		WrIndex++;
+		// if we read multiple bytes, we need to assert ACK after each receive
+		if ((i2c->bufLength - WrIndex) > 1)
+			LPC_I2Cx->I2CONSET = I2CONSET_AA; /* assert ACK after data is received */
+		else
+			LPC_I2Cx->I2CONCLR = I2CONCLR_AAC;
+
+		LPC_I2Cx->I2CONCLR = I2CONCLR_SIC;
+		break;
+
 	case MR_NACK_DATA:
+		if ((i2c->bufLength - WrIndex) > 1)
+		{
+			I2CMasterState = I2C_STOP_SEND;
+			LPC_I2Cx->I2CONSET = I2CONSET_STO; /* Set Stop flag */
+			LPC_I2Cx->I2CONCLR = I2CONCLR_SIC;
+		}
+		else
+			I2CMasterState = I2C_FAIL;
+
+#ifdef OLD
 		I2CMasterBuffer[3 + RdIndex] = LPC_I2Cx->I2DAT;
 		RdIndex++;
 		if (RdIndex != I2CReadLength)
 		{
-			I2CMasterState = DATA_ACK;
+			I2CMasterState = I2C_REG_ADD_SEND;
 		}
 		else
 		{
@@ -157,19 +240,16 @@ void I2C1_IRQHandler(void)
 		}
 		//LPC_I2Cx->I2CONSET = I2CONSET_AA; /* assert ACK after data is received */
 		LPC_I2Cx->I2CONCLR = I2CONCLR_SIC;
+#endif
 		break;
 
 	case MT_NACK_SLAVEADDR: /* regardless, it's a NACK */
-
+	case Mx_ARB_LOST:
 	case MR_NACK_SLAVEADDR:
-		LPC_I2Cx->I2CONCLR = I2CONCLR_SIC;
-		I2CMasterState = DATA_NACK;
-		break;
-
-	case 0x38: /* Arbitration lost, in this example, we don't
-	 deal with multiple master situation */
 	default:
+		LPC_I2Cx->I2CONSET = I2CONSET_STO; /* Set Stop flag */
 		LPC_I2Cx->I2CONCLR = I2CONCLR_SIC;
+		I2CMasterState = I2C_FAIL;
 		break;
 	}
 }
@@ -196,7 +276,7 @@ uint32_t I2CStart(void)
 	/*--- Wait until START transmitted ---*/
 	while (1)
 	{
-		if (I2CMasterState == I2C_STARTED)
+		if (I2CMasterState == I2C_ADDRESS_SEND)
 		{
 			retVal = TRUE;
 			break;
@@ -242,7 +322,7 @@ uint32_t I2CStop(void)
  **				interrupt handler was not installed correctly
  **
  *****************************************************************************/
-uint32_t I2CInit(uint32_t I2cMode)
+uint32_t I2CInit(void)
 {
 #ifdef I2C0
 	LPC_SC->PCONP |= (1 << 19);
@@ -314,11 +394,11 @@ uint32_t I2CInit(uint32_t I2cMode)
  **				timed out.
  **
  *****************************************************************************/
-uint32_t I2CEngine(void)
+uint32_t I2CEngine(I2C_DATA *p)
 {
 	I2CMasterState = I2C_IDLE;
-	RdIndex = 0;
-	WrIndex = 0;
+	i2c = p;
+
 	if (I2CStart() != TRUE)
 	{
 		I2CStop();
@@ -327,9 +407,9 @@ uint32_t I2CEngine(void)
 
 	while (1)
 	{
-		if (I2CMasterState == DATA_NACK)
+		if (I2CMasterState == I2C_STOP_SEND || I2CMasterState == I2C_FAIL)
 		{
-			I2CStop();
+			//I2CStop();
 			break;
 		}
 	}

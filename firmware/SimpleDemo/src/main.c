@@ -46,6 +46,8 @@ int main(void)
 }
 /*-----------------------------------------------------------*/
 #include "lpc17xx_clkpwr.h"
+#include "i2c.h"
+
 #define BUFSIZE 10
 extern volatile uint32_t I2CCount;
 extern volatile uint8_t I2CMasterBuffer[BUFSIZE];
@@ -66,6 +68,20 @@ static void mainTask(void *pvParameters)
 	CLKPWR_ConfigPPWR(CLKPWR_PCONP_PCGPIO, ENABLE);
 	spiInit();
 	I2CInit();
+#define ITG3200 0xD0
+	uint8_t i2cBuffer[8];
+	I2C_DATA i2c;
+
+	while (1)
+	{
+		i2c.address = ITG3200;
+		i2c.slaveRegister = 0;// who am i register
+		i2c.readData = TRUE;
+		i2c.bufLength = 2;
+		i2c.buffer = i2cBuffer;
+		I2CEngine(&i2c);
+	}
+#ifdef OLD
 #define ITG3200_W 0xD0
 #define ITG3200_R 0xD1
 	int16_t value;
@@ -97,7 +113,6 @@ static void mainTask(void *pvParameters)
 	for (;;)
 	{
 
-
 		I2CWriteLength = 2;
 		I2CReadLength = 1;
 		I2CMasterBuffer[0] = ITG3200_W;
@@ -127,9 +142,9 @@ static void mainTask(void *pvParameters)
 		}
 
 		//vTaskDelay(1);
-
-	}
+#endif
 }
+
 /*-----------------------------------------------------------*/
 
 static void idleTask(void *pvParameters)

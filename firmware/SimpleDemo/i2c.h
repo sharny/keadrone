@@ -10,8 +10,8 @@
  ******************************************************************************/
 #ifndef __I2C_H 
 #define __I2C_H
+#include "lpc_types.h"
 
-#define BUFSIZE			0x20
 #define MAX_TIMEOUT		0x00FFFFFF
 
 #define I2CMASTER		0x01
@@ -26,15 +26,14 @@
 
 #define RD_BIT			0x01
 
-typedef enum
+typedef struct
 {
-	I2C_IDLE,
-	I2C_STARTED,
-	I2C_RESTARTED,
-	I2C_REPEATED_START,
-	DATA_ACK,
-	DATA_NACK,
-} STATES_I2C;
+	uint8_t address; // i2c slave device address
+	uint8_t slaveRegister; //i2c slave device (start) register
+	Bool readData; // false if writing data, else true
+	uint8_t * buffer;
+	uint32_t bufLength;
+} I2C_DATA;
 
 #define I2CONSET_I2EN		0x00000040  /* I2C Control Set Register */
 #define I2CONSET_AA			0x00000004
@@ -53,10 +52,10 @@ typedef enum
 #define I2SCLL_SCLL			0x00000080  /* I2C SCL Duty Cycle Low Reg */
 
 extern void I2C0_IRQHandler(void);
-extern uint32_t I2CInit(uint32_t I2cMode);
+extern uint32_t I2CInit(void);
 extern uint32_t I2CStart(void);
 extern uint32_t I2CStop(void);
-extern uint32_t I2CEngine(void);
+extern uint32_t I2CEngine(I2C_DATA *p);
 #endif /* end __I2C_H */
 /****************************************************************************
  **                            End Of File
