@@ -147,7 +147,7 @@ static Bool bmaInit(uint8_t range, uint8_t bw)
 	return TRUE;
 }
 
-void gpioIntInit(void)
+static void gpioIntInit(void)
 {
 	//Enable rising edge interrupt for P0.8
 	LPC_GPIOINT->IO0IntEnR |= 1 << 8;//| 1<<9;
@@ -234,6 +234,7 @@ void EINT3_IRQHandler(void)
 	else if (LPC_GPIOINT->IO0IntStatR & (1 << 7)) //GPIO 0.7
 	{
 		LPC_GPIOINT->IO0IntClr = 1 << 7;
+		gyroGetData();
 	}
 }
 
