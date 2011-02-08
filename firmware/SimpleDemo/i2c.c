@@ -359,12 +359,20 @@ uint32_t I2CEnginePolling(I2C_DATA *p)
 	}
 	return (TRUE);
 }
+
 uint32_t I2CEngine_FromISR(I2C_DATA *p)
 {
 	I2CMasterState = I2C_IDLE;
 	i2c = p;
 	/*--- Issue a start condition ---*/
 	LPC_I2Cx->I2CONSET = I2CONSET_STA; /* Set Start flag */
+}
+Bool I2CgetMasterState_FromISR(void)
+{
+	if (I2CMasterState == I2C_STOP_SEND)
+		return FALSE;
+	else
+		return TRUE;
 }
 /******************************************************************************
  **                            End Of File
