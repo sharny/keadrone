@@ -5,16 +5,19 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../cr_startup_lpc17.c \
+../gyro-ITG3200.c \
 ../i2c.c \
 ../retargetPrintf.c 
 
 OBJS += \
 ./cr_startup_lpc17.o \
+./gyro-ITG3200.o \
 ./i2c.o \
 ./retargetPrintf.o 
 
 C_DEPS += \
 ./cr_startup_lpc17.d \
+./gyro-ITG3200.d \
 ./i2c.d \
 ./retargetPrintf.d 
 

@@ -55,6 +55,7 @@
 <option id="com.crt.advproject.gas.arch.112219399" name="Architecture" superClass="com.crt.advproject.gas.arch" value="com.crt.advproject.gas.target.cm3" valueType="enumerated"/>
 <option id="com.crt.advproject.gas.thumb.709413895" name="Thumb mode" superClass="com.crt.advproject.gas.thumb" value="true" valueType="boolean"/>
 <option id="gnu.both.asm.option.flags.crt.1443627356" name="Assembler flags" superClass="gnu.both.asm.option.flags.crt" value="-c -x assembler-with-cpp -DDEBUG -D__CODE_RED -D__REDLIB__ " valueType="string"/>
+<option id="com.crt.advproject.gas.hdrlib.73872657" name="Use headers for C library" superClass="com.crt.advproject.gas.hdrlib" value="com.crt.advproject.gas.hdrlib.codered" valueType="enumerated"/>
 <inputType id="com.crt.advproject.assembler.input.954010908" name="Additional Assembly Source Files" superClass="com.crt.advproject.assembler.input"/>
 </tool>
 <tool id="com.crt.advproject.link.cpp.exe.debug.1117158825" name="MCU C++ Linker" superClass="com.crt.advproject.link.cpp.exe.debug">
@@ -445,11 +446,11 @@
 <storageModule moduleId="com.crt.config">
 <projectStorage>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&#13;
 &lt;TargetConfig&gt;&#13;
-&lt;Properties property_0="" property_1="" property_2="" property_3="NXP" property_4="LPC1751" property_count="5" version="1"/&gt;&#13;
+&lt;Properties property_0="" property_1="" property_2="" property_3="NXP" property_4="LPC1754" property_count="5" version="1"/&gt;&#13;
 &lt;infoList vendor="NXP"&gt;&#13;
-&lt;info chip="LPC1751" match_id="0x00001110,0x25001118" name="LPC1751"&gt;&#13;
+&lt;info chip="LPC1754" match_id="0x00011722,0x25011722" name="LPC1754"&gt;&#13;
 &lt;chip&gt;&#13;
-&lt;name&gt;LPC1751&lt;/name&gt;&#13;
+&lt;name&gt;LPC1754&lt;/name&gt;&#13;
 &lt;family&gt;LPC17xx&lt;/family&gt;&#13;
 &lt;vendor&gt;NXP (formerly Philips)&lt;/vendor&gt;&#13;
 &lt;reset board="None" core="Real" sys="Real"/&gt;&#13;
@@ -457,9 +458,11 @@
 &lt;memory can_program="true" id="Flash" is_ro="true" type="Flash"/&gt;&#13;
 &lt;memory id="RAM" type="RAM"/&gt;&#13;
 &lt;memory id="Periph" is_volatile="true" type="Peripheral"/&gt;&#13;
-&lt;memoryInstance derived_from="Flash" id="MFlash32" location="0x00000000" size="0x8000"/&gt;&#13;
-&lt;memoryInstance derived_from="RAM" id="RamLoc8" location="0x10000000" size="0x2000"/&gt;&#13;
-&lt;prog_flash blocksz="0x1000" location="0" maxprgbuff="0x1000" progwithcode="TRUE" size="0x8000"/&gt;&#13;
+&lt;memoryInstance derived_from="Flash" id="MFlash128" location="0x00000000" size="0x20000"/&gt;&#13;
+&lt;memoryInstance derived_from="RAM" id="RamLoc16" location="0x10000000" size="0x4000"/&gt;&#13;
+&lt;memoryInstance derived_from="RAM" id="RamAHB16" location="0x2007c000" size="0x4000"/&gt;&#13;
+&lt;prog_flash blocksz="0x1000" location="0" maxprgbuff="0x1000" progwithcode="TRUE" size="0x10000"/&gt;&#13;
+&lt;prog_flash blocksz="0x8000" location="0x10000" maxprgbuff="0x1000" progwithcode="TRUE" size="0x10000"/&gt;&#13;
 &lt;peripheralInstance derived_from="LPC17_NVIC" determined="infoFile" id="NVIC" location="0xE000E000"/&gt;&#13;
 &lt;peripheralInstance derived_from="TIMER" determined="infoFile" enable="SYSCTL.PCONP.PCTIM0&amp;amp;0x1" id="TIMER0" location="0x40004000"/&gt;&#13;
 &lt;peripheralInstance derived_from="TIMER" determined="infoFile" enable="SYSCTL.PCONP.PCTIM1&amp;amp;0x1" id="TIMER1" location="0x40008000"/&gt;&#13;
@@ -471,6 +474,7 @@
 &lt;peripheralInstance derived_from="FGPIO" determined="infoFile" enable="SYSCTL.PCONP.PCGPIO&amp;amp;0x1" id="GPIO3" location="0x2009C060"/&gt;&#13;
 &lt;peripheralInstance derived_from="FGPIO" determined="infoFile" enable="SYSCTL.PCONP.PCGPIO&amp;amp;0x1" id="GPIO4" location="0x2009C080"/&gt;&#13;
 &lt;peripheralInstance derived_from="LPC17_SYSCTL" determined="infoFile" id="SYSCTL" location="0x400FC000"/&gt;&#13;
+&lt;peripheralInstance derived_from="LPC17_DAC" determined="infoFile" enable="PCB.PINSEL1.P0_26&amp;amp;0x2=2" id="DAC" location="0x4008C000"/&gt;&#13;
 &lt;peripheralInstance derived_from="LPC17xx_UART" determined="infoFile" enable="SYSCTL.PCONP.PCUART0&amp;amp;0x1" id="UART0" location="0x4000C000"/&gt;&#13;
 &lt;peripheralInstance derived_from="LPC17xx_UART_MODEM" determined="infoFile" enable="SYSCTL.PCONP.PCUART1&amp;amp;0x1" id="UART1" location="0x40010000"/&gt;&#13;
 &lt;peripheralInstance derived_from="LPC17xx_UART" determined="infoFile" enable="SYSCTL.PCONP.PCUART2&amp;amp;0x1" id="UART2" location="0x40098000"/&gt;&#13;
