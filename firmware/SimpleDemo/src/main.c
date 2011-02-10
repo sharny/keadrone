@@ -31,7 +31,7 @@ int main(void)
 	{
 		/* Start the two tasks as described in the accompanying application
 		 note. */
-		xTaskCreate( mainTask, ( signed char * ) "Rx", (200), NULL, tskIDLE_PRIORITY+1, NULL );
+		//xTaskCreate( mainTask, ( signed char * ) "Rx", (200), NULL, tskIDLE_PRIORITY+1, NULL );
 		xTaskCreate( idleTask, ( signed char * ) "TX", (100), NULL, tskIDLE_PRIORITY, NULL );
 
 		/* Start the tasks running. */
@@ -57,7 +57,10 @@ static void mainTask(void *pvParameters)
 	/* Initialize xNextWakeTime - this only needs to be done once. */
 	xNextWakeTime = xTaskGetTickCount();
 
+	for (;;)
+		;
 	UARTInit(3, 115200); /* baud rate setting */
+	printf("Maintask: Running\n");
 	printf("Maintask: Running\n");
 
 	CLKPWR_ConfigPPWR(CLKPWR_PCONP_PCGPIO, ENABLE);
@@ -65,7 +68,10 @@ static void mainTask(void *pvParameters)
 	gyroInit();
 
 	while (1)
-		vTaskDelay(100);
+	{
+		vTaskDelay(1);
+		//	gyroGetData();
+	}
 }
 
 /*-----------------------------------------------------------*/

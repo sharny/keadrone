@@ -51,7 +51,7 @@
  * FreeRTOS API DOCUMENTATION AVAILABLE ON THE FreeRTOS.org WEB SITE.
  *----------------------------------------------------------*/
 
-extern unsigned int SystemCoreClock;
+//extern unsigned int SystemCoreClock;
 
 #define configUSE_PREEMPTION		1
 #define configUSE_IDLE_HOOK			0

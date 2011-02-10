@@ -234,7 +234,7 @@ void EINT3_IRQHandler(void)
 	else if (LPC_GPIOINT->IO0IntStatR & (1 << 7)) //GPIO 0.7
 	{
 		LPC_GPIOINT->IO0IntClr = 1 << 7;
-		gyroGetData();
+		gyroGetDataFromChip();
 	}
 }
 
