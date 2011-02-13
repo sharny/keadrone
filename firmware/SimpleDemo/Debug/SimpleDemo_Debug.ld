@@ -3,7 +3,7 @@
 * (C) Code Red Technologies Ltd, 2008-10
 * Generated linker script file for LPC1754
 * Created from nxp_lpc17_c.ld (vLPCXpresso v3.6 (2 [Build 279] [29/01/2011] ))
-* By LPCXpresso v3.6.2 [Build 279] [29/01/2011]  on Thu Feb 10 13:20:30 CET 2011
+* By LPCXpresso v3.6.2 [Build 279] [29/01/2011]  on Sun Feb 13 14:13:45 CET 2011
 */
 
 

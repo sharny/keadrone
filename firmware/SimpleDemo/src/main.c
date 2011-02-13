@@ -3,6 +3,8 @@
 #include "task.h"
 #include "queue.h"
 
+#include "semphr.h"
+#include "bma180.h"
 #include "gyro-ITG3200.h"
 #include "lpc17xx_clkpwr.h"
 
@@ -23,19 +25,22 @@ static void idleTask(void *pvParameters);
 /* The queue used by both tasks. */
 static xQueueHandle xQueue = NULL;
 
+xSemaphoreHandle xSemaphore;
 /*-----------------------------------------------------------*/
 
 int main(void)
 {
 	/* Create the queue. */
-	xQueue = xQueueCreate(mainQUEUE_LENGTH, sizeof(unsigned long));
+	//xQueue = xQueueCreate(mainQUEUE_LENGTH, sizeof(unsigned long));xQueue != NULL &&
 
-	if (xQueue != NULL)
+	vSemaphoreCreateBinary( xSemaphore );
+
+	if (xSemaphore != NULL)
 	{
 		/* Start the two tasks as described in the accompanying application
 		 note. */
 		xTaskCreate( mainTask, ( signed char * ) "Rx", (200), NULL, tskIDLE_PRIORITY+1, NULL );
-		xTaskCreate( idleTask, ( signed char * ) "TX", (100), NULL, tskIDLE_PRIORITY, NULL );
+		xTaskCreate( idleTask, ( signed char * ) "TX", (300), NULL, tskIDLE_PRIORITY, NULL );
 
 		/* Start the tasks running. */
 		vTaskStartScheduler();
@@ -48,7 +53,6 @@ int main(void)
 		;
 }
 /*-----------------------------------------------------------*/
-
 
 #define BUFSIZE 10
 
@@ -94,7 +98,26 @@ static void idleTask(void *pvParameters)
 		LPC_GPIO1->FIOCLR = ulLEDState & (1 << 1);
 		LPC_GPIO1->FIOSET = ((~ulLEDState) & (1 << 1));
 #endif
-		vTaskDelay(500);
+#define LONG_TIME 0xffff
+		/*Block waiting for the semaphore to become available. */
+		if (xSemaphoreTake( xSemaphore, LONG_TIME ) == pdTRUE)
+		{
+			/* It is time to execute. */
+
+			static acc_data acc_copy;
+			static GYRO_S gyro_copy;
+
+			acc_copy = accCurrent;
+			gyro_copy = gyro;
+			printf("%d,%d,%d,%d,%d,%d\n", acc_copy.X, acc_copy.Y, acc_copy.Z,
+					gyro_copy.x, gyro_copy.y, gyro_copy.z);
+			/* We have finished our task.  Return to the top of the loop where
+			 we will block on the semaphore until it is time to execute
+			 again.  Note when using the semaphore for synchronisation with an
+			 ISR in this manner there is no need to 'give' the semaphore back. */
+		}
+
+//		vTaskDelay(500);
 	}
 }
 /*-----------------------------------------------------------*/
@@ -115,4 +138,4 @@ void EINT3_IRQHandler(void)
 		gyroGetDataFromChip();
 	}
 }
-
+/*-----------------------------------------------------------*/

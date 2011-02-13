@@ -8,6 +8,18 @@
 #ifndef BMA180_H_
 #define BMA180_H_
 
+typedef struct
+{
+	int16_t X;
+	int16_t Y;
+	int16_t Z;
+	uint8_t temp;
+} acc_data;
+
+acc_data acc[2];
+
+void spiGet(acc_data *p);
+
 //Address defines for BMA180//
 //====================//
 //ID and Version Registers

@@ -154,13 +154,8 @@ static void gpioIntInit(void)
 	NVIC_EnableIRQ(EINT3_IRQn);
 }
 
-struct
-{
-	INT_16 X;
-	INT_16 Y;
-	INT_16 Z;
-	uint8_t temp;
-} acc;
+static int intFillsBuffer = 0;
+acc_data acc[2];
 
 int spiPoll(void)
 {
@@ -170,27 +165,48 @@ int spiPoll(void)
 	// get 7 bytes starting from reg. ACCXLSB
 	bmaReadMultiple(ACCXLSB, &regData[0], 7);
 
-	acc.X = regData[0];
-	acc.X |= (uint16_t) regData[1] << 8;
-	acc.X = acc.X >> 2; // Get rid of two non-value bits in LSB
+	acc[intFillsBuffer].X = regData[0];
+	acc[intFillsBuffer].X |= (uint16_t) regData[1] << 8;
+	acc[intFillsBuffer].X = acc[intFillsBuffer].X >> 2; // Get rid of two non-value bits in LSB
 
-	acc.Y = regData[2];
-	acc.Y |= (uint16_t) regData[3] << 8;
-	acc.Y = acc.Y >> 2; // Get rid of two non-value bits in LSB
+	acc[intFillsBuffer].Y = regData[2];
+	acc[intFillsBuffer].Y |= (uint16_t) regData[3] << 8;
+	acc[intFillsBuffer].Y = acc[intFillsBuffer].Y >> 2; // Get rid of two non-value bits in LSB
 
-	acc.Z = regData[4];
-	acc.Z |= (uint16_t) regData[5] << 8;
-	acc.Z = acc.Z >> 2; // Get rid of two non-value bits in LSB
+	acc[intFillsBuffer].Z = regData[4];
+	acc[intFillsBuffer].Z |= (uint16_t) regData[5] << 8;
+	acc[intFillsBuffer].Z = acc[intFillsBuffer].Z >> 2; // Get rid of two non-value bits in LSB
 
-	acc.temp = (uint8_t) regData[6];
-	/*	static uint16_t counter = 0;
-	 if (counter++ == 1000)
-	 {
-	 printf("%.4d,%.4d,%.4d\n", acc.X, acc.Y, acc.Z);
-	 counter = 0;
-	 }
-	 */
+	acc[intFillsBuffer].temp = (uint8_t) regData[6];
+
+	/* Switch buffer to latest new data */
+	if (intFillsBuffer)
+		intFillsBuffer = 0;
+	else
+		intFillsBuffer = 1;
+
 	return 0;
+}
+
+void spiGet(acc_data *p)
+{
+	/* note that the acc. meter gives data at 2.66kHz rate, and gyro at 2kHz.
+	 * Thats why we use dual buffer for mutual exclusion.
+	 */
+
+	int currBuffer;
+	// Get the buffer that is currently filled by the interrupt
+	currBuffer = intFillsBuffer;
+
+	/* Switch buffer to latest new data that is not being filled (toggle)*/
+	if (currBuffer)
+		currBuffer = 0;
+	else
+		currBuffer = 1;
+
+	// copy current buffer to pointer.
+	*p = acc[currBuffer];
+
 }
 
 void spiInit(void)
