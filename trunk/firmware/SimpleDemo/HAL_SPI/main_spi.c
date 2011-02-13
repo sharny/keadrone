@@ -223,18 +223,3 @@ void spiInit(void)
 	gpioIntInit();
 	spiPoll();
 }
-void EINT3_IRQHandler(void)
-{
-	// only rising edge of Acc. meter is usefull and enabled.
-	if (LPC_GPIOINT->IO0IntStatR & (1 << 8)) // GPIO 0.8
-	{
-		LPC_GPIOINT->IO0IntClr = 1 << 8;
-		spiPoll();
-	}
-	else if (LPC_GPIOINT->IO0IntStatR & (1 << 7)) //GPIO 0.7
-	{
-		LPC_GPIOINT->IO0IntClr = 1 << 7;
-		gyroGetDataFromChip();
-	}
-}
-

@@ -7,33 +7,169 @@
 #include "i2c.h"
 #include "LPC17xx.h"
 
-volatile uint8_t i2cBuffer[10];
-I2C_DATA i2c;
+/* Kernel includes. */
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+
+// rx/tx buffer used for i2c
+static volatile uint8_t i2cBuffer[10];
+// i2c config struct init
+static I2C_DATA i2c;
+
+// the ITG i2c address
+#define ITG3200 0xD0
+
 typedef struct
 {
 	volatile int16_t x;
 	volatile int16_t y;
 	volatile int16_t z;
+	int16_t x_offset;
+	int16_t y_offset;
+	int16_t z_offset;
 	volatile int16_t temp;
 } GYRO_S;
 
-int16_t x_offset;
-int16_t y_offset;
-int16_t z_offset;
+GYRO_S gyro =
+{ 0 };
 
-GYRO_S GYROA[64];
-GYRO_S GYROB[64];
-static void gpioIntInit(void)
+#ifdef UNUSED
+#define HISTORY_IIR    32 //'L' average point (baseline updated @100mS)
+typedef struct
+{
+	uint32_t IIR_Sum;
+	uint16_t currReading;
+}FIR_FILTER;
+
+uint16_t IIR_Average(FIR_FILTER *p)
+{
+	// on boot-up our value is never 0
+	if (p->IIR_Sum == 0)
+	p->IIR_Sum = (UINT32) p->currReading * HISTORY_IIR;
+
+	p->IIR_Sum -= (UINT32)(p->IIR_Sum / HISTORY_IIR);
+	p->IIR_Sum += p->currReading;
+
+	// note, this filter has an gain of HISTERY
+	// therefore we must devide the average value
+	// with HISTORY to get our current average
+	return (UINT16)(p->IIR_Sum / HISTORY_IIR);
+}
+
+#define HISTORY_IIR    32 //'L' average point (baseline updated @100mS)
+typedef struct
+{
+	uint32_t IIR_Sum;
+	uint16_t currReading;
+}FIR_FILTER;
+
+uint16_t IIR_Average(FIR_FILTER *p)
+{
+	// on boot-up our value is never 0
+	if (p->IIR_Sum == 0)
+	p->IIR_Sum = (UINT32) p->currReading * HISTORY_IIR;
+
+	p->IIR_Sum -= (UINT32)(p->IIR_Sum / HISTORY_IIR);
+	p->IIR_Sum += p->currReading;
+
+	// note, this filter has an gain of HISTERY
+	// therefore we must devide the average value
+	// with HISTORY to get our current average
+	return (UINT16)(p->IIR_Sum / HISTORY_IIR);
+}
+
+#endif
+
+static int16_t slewRateLimit(int16_t newValue, int16_t * rawValue)
+{
+	// Start slew-rate limiter
+	if (*rawValue == 0)
+		*rawValue = newValue;
+
+	if (*rawValue < newValue)
+		(*rawValue)++;
+	else
+		(*rawValue)--;
+
+	return (*rawValue);
+}
+
+/* Takes X samples and averages them. This is the
+ *  new offset that will be used
+ */
+static void gyroCalculateOffset(void)
+{
+	//FIR_FILTER x, y, z;
+	int16_t newValueX, newValueY, newValueZ;
+
+	int32_t sumX = 0, sumY = 0, sumZ = 0;
+	int16_t rawX = 0, rawY = 0, rawZ = 0;
+	uint16_t counter = 0;
+
+	for (;;)
+	{
+		// block for new data
+		while (!(LPC_GPIO0->FIOPIN & (1 << 7)))
+			;
+
+		do
+		{
+			// assemble polling request
+			i2c.address = ITG3200;
+			i2c.slaveRegister = 27;
+			i2c.readData = TRUE;
+			i2c.bufLength = 8;
+			i2c.buffer = i2cBuffer;
+		} while (I2CEnginePolling(&i2c) == FALSE);
+
+		newValueX = ((int16_t) i2cBuffer[2] << 8) + i2cBuffer[3];
+		newValueY = ((int16_t) i2cBuffer[4] << 8) + i2cBuffer[5];
+		newValueZ = ((int16_t) i2cBuffer[6] << 8) + i2cBuffer[7];
+
+		//gyro[counter].temp = ((int16_t) i2cBuffer[0] << 8) + i2cBuffer[1];
+		//gyro[counter].x = ((int16_t) i2cBuffer[2] << 8) + i2cBuffer[3];
+		//gyro[counter].y = ((int16_t) i2cBuffer[4] << 8) + i2cBuffer[5];
+		//gyro[counter].z = ((int16_t) i2cBuffer[6] << 8) + i2cBuffer[7];
+
+		/*
+		 x.currReading = ((int16_t) i2cBuffer[2] << 8) + i2cBuffer[3];
+		 gyro.x_offset = IIR_Average(x);
+
+		 y.currReading = ((int16_t) i2cBuffer[4] << 8) + i2cBuffer[5];
+		 gyro.y_offset = IIR_Average(x);
+
+		 z.currReading = ((int16_t) i2cBuffer[6] << 8) + i2cBuffer[7];
+		 gyro.z_offset = IIR_Average(x);
+		 */
+
+		sumX += (int32_t) slewRateLimit(newValueX, &rawX);
+		sumY += (int32_t) slewRateLimit(newValueY, &rawY);
+		sumZ += (int32_t) slewRateLimit(newValueZ, &rawZ);
+
+		counter++;
+		if (counter == 2046)
+		{
+			gyro.x_offset = sumX / 2047;
+			gyro.y_offset = sumY / 2047;
+			gyro.z_offset = sumZ / 2047;
+			break;
+		}
+
+	}
+}
+
+static void gpioIntEnable(void)
 {
 	//Enable rising edge interrupt for P0.7
 	LPC_GPIOINT->IO0IntEnR |= 1 << 7;//| 1<<9;
 	NVIC_EnableIRQ(EINT3_IRQn);
 }
-void gyroCalculateOffset(void);
+
 void gyroInit(void)
 {
+	// init the i2c bus
 	I2CInit();
-#define ITG3200 0xD0
 
 	/* Config of ITG-3200 registers */
 	i2c.address = ITG3200;
@@ -94,129 +230,54 @@ void gyroInit(void)
 		i2c.bufLength = 1;
 		i2cBuffer[0] = 0x31;//0x11; // new value reg. 23 (interrupts)
 	} while (I2CEnginePolling(&i2c) == FALSE);
-//	printf("Gyro config complete...");
-	vTaskDelay(10);
-	// assemble our first request
-	i2c.address = ITG3200;
-	i2c.slaveRegister = 27;
-	i2c.readData = TRUE;
-	i2c.bufLength = 8;
-	i2c.buffer = i2cBuffer;
-	I2CEngine_FromISR(&i2c);
+	printf("Gyro config complete...");
+
+	/* Let the internal low pass filter of the gyro fill */
+	vTaskDelay(100);
 
 	gyroCalculateOffset();
-	gpioIntInit();
-}
 
-void gyroFirAverage(GYRO_S *p)
-{
-	uint16_t counter;
-	int32_t bigSum = 0;
-
-	for (counter = 0; counter < 128; counter++)
+	do
 	{
-		bigSum += p[counter].x;
-	}
-	bigSum /= 128;
-	x_offset = bigSum;
-
-}
-
-void gyroCalculateOffset(void)
-{
-	for (;;)
-	{
-		// block for new data
-		while (!(LPC_GPIO0->FIOPIN & (1 << 7)))
-			;
-
+		// assemble our first request
+		i2c.address = ITG3200;
+		i2c.slaveRegister = 27;
+		i2c.readData = TRUE;
 		i2c.bufLength = 8;
 		i2c.buffer = i2cBuffer;
-		I2CEngine_FromISR(&i2c);
+	} while (I2CEnginePolling(&i2c) == FALSE);
 
-		static uint16_t counter = 0;
+	// load initial values
+	gyro.x = ((int16_t) i2cBuffer[2] << 8) + i2cBuffer[3];
+	gyro.y = ((int16_t) i2cBuffer[4] << 8) + i2cBuffer[5];
+	gyro.z = ((int16_t) i2cBuffer[6] << 8) + i2cBuffer[7];
 
-		GYROA[counter].temp = ((int16_t) i2cBuffer[0] << 8) + i2cBuffer[1];
-		GYROA[counter].x = ((int16_t) i2cBuffer[2] << 8) + i2cBuffer[3];
-		GYROA[counter].y = ((int16_t) i2cBuffer[4] << 8) + i2cBuffer[5];
-		GYROA[counter].z = ((int16_t) i2cBuffer[6] << 8) + i2cBuffer[7];
-
-		counter++;
-		if (counter == 64)
-		{
-			counter = 0;
-
-			//gyroFirAverage(GYROA);
-			break;
-		}
-	}
+	/* Enable interrupt for gyro */
+	gpioIntEnable();
 }
-static volatile Bool bufferType = 0;
-static volatile Bool bufferFull = 0;
+
 void gyroGetDataFromChip(void)
 {
+	// static to reduce interrupt stack
+	static int16_t newValueX, newValueY, newValueZ;
 	// Request all data from gyro (temp + gZ,gX,gY)
 	//	i2c.address = ITG3200;
 	//i2c.slaveRegister = 27;
 	//i2c.readData = TRUE;
+	//i2c.buffer = i2cBuffer;
+
+	/* Request new data */
 	i2c.bufLength = 8;
-	i2c.buffer = i2cBuffer;
 	I2CEngine_FromISR(&i2c);
 
-	static uint16_t counter = 0;
-	if (bufferType == 0)
-	{
-		GYROA[counter].temp = ((int16_t) i2cBuffer[0] << 8) + i2cBuffer[1];
-		GYROA[counter].x = ((int16_t) i2cBuffer[2] << 8) + i2cBuffer[3];
-		GYROA[counter].y = ((int16_t) i2cBuffer[4] << 8) + i2cBuffer[5];
-		GYROA[counter].z = ((int16_t) i2cBuffer[6] << 8) + i2cBuffer[7];
-	}
-	else
-	{
-		GYROB[counter].temp = ((int16_t) i2cBuffer[0] << 8) + i2cBuffer[1];
-		GYROB[counter].x = ((int16_t) i2cBuffer[2] << 8) + i2cBuffer[3];
-		GYROB[counter].y = ((int16_t) i2cBuffer[4] << 8) + i2cBuffer[5];
-		GYROB[counter].z = ((int16_t) i2cBuffer[6] << 8) + i2cBuffer[7];
-	}
-	counter++;
-	if (counter == 64)
-	{
-		counter = 0;
-		if (bufferFull == FALSE)
-		{
-			bufferFull = TRUE;
-			// change the buffer
-			bufferType ^= 1;
-		}
-	}
+	newValueX = ((int16_t) i2cBuffer[2] << 8) + i2cBuffer[3];
+	newValueY = ((int16_t) i2cBuffer[4] << 8) + i2cBuffer[5];
+	newValueZ = ((int16_t) i2cBuffer[6] << 8) + i2cBuffer[7];
 
-	/*
+#define FILTERSHIFT 1
 
-	 while (!(LPC_GPIO0->FIOPIN & (1 << 7)))
-	 ;
-	 */
-}
-
-void gyroGetData(void)
-{
-	static uint16_t counter = 0;
-	GYRO_S * GYRO;
-	if (bufferFull)
-	{
-		if (bufferType == 1)
-			GYRO = GYROA;
-		else
-			GYRO = GYROB;
-
-		for (counter = 0; counter < 64; counter++)
-		{
-			printf("%d,", GYRO[counter].x);
-			printf("%d,", GYRO[counter].y);
-			printf("%d,", GYRO[counter].z);
-			printf("\n");
-		}
-		bufferFull = FALSE;
-		printf(",,,EndBuffer\n");
-
-	}
+	// perform just a little bit of filtering to improve signal to noise
+	gyro.x += (((newValueX / 2) - (gyro.x / 2)) >> FILTERSHIFT);
+	gyro.y += (((newValueY / 2) - (gyro.y / 2)) >> FILTERSHIFT);
+	gyro.z += (((newValueZ / 2) - (gyro.z / 2)) >> FILTERSHIFT);
 }
