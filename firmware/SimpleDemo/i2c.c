@@ -203,10 +203,14 @@ void I2C1_IRQHandler(void)
 	case Mx_ARB_LOST:
 	case MR_NACK_SLAVEADDR:
 	default:
-		LPC_I2Cx->I2CONSET = I2CONSET_STO; /* Set Stop flag */
-		LPC_I2Cx->I2CONCLR = I2CONCLR_SIC;
 		I2CMasterState = I2C_FAIL;
 		break;
+	}
+
+	if (I2CMasterState == I2C_FAIL)
+	{
+		LPC_I2Cx->I2CONSET = I2CONSET_STO; /* Set Stop flag */
+		LPC_I2Cx->I2CONCLR = I2CONCLR_SIC;
 	}
 }
 
@@ -359,6 +363,13 @@ uint32_t I2CEnginePolling(I2C_DATA *p)
 	}
 	return (TRUE);
 }
+Bool I2CgetMasterState_FromISR(void)
+{
+	if (I2CMasterState == I2C_STOP_SEND || I2CMasterState == I2C_FAIL)
+		return FALSE;
+	else
+		return TRUE;
+}
 
 uint32_t I2CEngine_FromISR(I2C_DATA *p)
 {
@@ -367,13 +378,7 @@ uint32_t I2CEngine_FromISR(I2C_DATA *p)
 	/*--- Issue a start condition ---*/
 	LPC_I2Cx->I2CONSET = I2CONSET_STA; /* Set Start flag */
 }
-Bool I2CgetMasterState_FromISR(void)
-{
-	if (I2CMasterState == I2C_STOP_SEND)
-		return FALSE;
-	else
-		return TRUE;
-}
+
 /******************************************************************************
  **                            End Of File
  ******************************************************************************/

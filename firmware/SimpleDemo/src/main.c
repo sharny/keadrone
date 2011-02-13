@@ -3,6 +3,9 @@
 #include "task.h"
 #include "queue.h"
 
+#include "gyro-ITG3200.h"
+#include "lpc17xx_clkpwr.h"
+
 /* The rate at which data is sent to the queue, specified in milliseconds. */
 #define mainQUEUE_SEND_FREQUENCY_MS			( 100 / portTICK_RATE_MS )
 
@@ -31,7 +34,7 @@ int main(void)
 	{
 		/* Start the two tasks as described in the accompanying application
 		 note. */
-		//xTaskCreate( mainTask, ( signed char * ) "Rx", (200), NULL, tskIDLE_PRIORITY+1, NULL );
+		xTaskCreate( mainTask, ( signed char * ) "Rx", (200), NULL, tskIDLE_PRIORITY+1, NULL );
 		xTaskCreate( idleTask, ( signed char * ) "TX", (100), NULL, tskIDLE_PRIORITY, NULL );
 
 		/* Start the tasks running. */
@@ -45,7 +48,7 @@ int main(void)
 		;
 }
 /*-----------------------------------------------------------*/
-#include "lpc17xx_clkpwr.h"
+
 
 #define BUFSIZE 10
 
@@ -57,10 +60,7 @@ static void mainTask(void *pvParameters)
 	/* Initialize xNextWakeTime - this only needs to be done once. */
 	xNextWakeTime = xTaskGetTickCount();
 
-	for (;;)
-		;
 	UARTInit(3, 115200); /* baud rate setting */
-	printf("Maintask: Running\n");
 	printf("Maintask: Running\n");
 
 	CLKPWR_ConfigPPWR(CLKPWR_PCONP_PCGPIO, ENABLE);
@@ -70,7 +70,6 @@ static void mainTask(void *pvParameters)
 	while (1)
 	{
 		vTaskDelay(1);
-		//	gyroGetData();
 	}
 }
 
@@ -99,4 +98,21 @@ static void idleTask(void *pvParameters)
 	}
 }
 /*-----------------------------------------------------------*/
+
+/* External input interrupt on change handler */
+void EINT3_IRQHandler(void)
+{
+	// only rising edge of Acc. meter is usefull and enabled.
+	if (LPC_GPIOINT->IO0IntStatR & (1 << 8)) // GPIO 0.8
+	{
+		LPC_GPIOINT->IO0IntClr = 1 << 8;
+		spiPoll();
+	}
+	// gyro data ready interrupt
+	else if (LPC_GPIOINT->IO0IntStatR & (1 << 7)) //GPIO 0.7
+	{
+		LPC_GPIOINT->IO0IntClr = 1 << 7;
+		gyroGetDataFromChip();
+	}
+}
 
