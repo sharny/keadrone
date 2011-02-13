@@ -20,17 +20,9 @@ static I2C_DATA i2c;
 // the ITG i2c address
 #define ITG3200 0xD0
 
-typedef struct
-{
-	volatile int16_t x;
-	volatile int16_t y;
-	volatile int16_t z;
-	int16_t x_offset;
-	int16_t y_offset;
-	int16_t z_offset;
-	volatile int16_t temp;
-} GYRO_S;
-
+#include "bma180.h"
+#include "semphr.h"
+#include "gyro-ITG3200.h"
 GYRO_S gyro =
 { 0 };
 
@@ -164,6 +156,7 @@ static void gpioIntEnable(void)
 	//Enable rising edge interrupt for P0.7
 	LPC_GPIOINT->IO0IntEnR |= 1 << 7;//| 1<<9;
 	NVIC_EnableIRQ(EINT3_IRQn);
+	NVIC_SetPriority(EINT3_IRQn, 30);
 }
 
 void gyroInit(void)
@@ -256,20 +249,17 @@ void gyroInit(void)
 	gpioIntEnable();
 }
 
+acc_data accCurrent;
 void gyroGetDataFromChip(void)
 {
 	// static to reduce interrupt stack
 	static int16_t newValueX, newValueY, newValueZ;
-	// Request all data from gyro (temp + gZ,gX,gY)
-	//	i2c.address = ITG3200;
-	//i2c.slaveRegister = 27;
-	//i2c.readData = TRUE;
-	//i2c.buffer = i2cBuffer;
 
 	/* Request new data */
 	i2c.bufLength = 8;
 	I2CEngine_FromISR(&i2c);
 
+	/* Get previous data */
 	newValueX = ((int16_t) i2cBuffer[2] << 8) + i2cBuffer[3];
 	newValueY = ((int16_t) i2cBuffer[4] << 8) + i2cBuffer[5];
 	newValueZ = ((int16_t) i2cBuffer[6] << 8) + i2cBuffer[7];
@@ -280,4 +270,17 @@ void gyroGetDataFromChip(void)
 	gyro.x += (((newValueX / 2) - (gyro.x / 2)) >> FILTERSHIFT);
 	gyro.y += (((newValueY / 2) - (gyro.y / 2)) >> FILTERSHIFT);
 	gyro.z += (((newValueZ / 2) - (gyro.z / 2)) >> FILTERSHIFT);
+
+	static uint16_t counter;
+	if (counter++ == 100)
+	{
+		counter = 0;
+		spiGet(&accCurrent);
+		static signed portBASE_TYPE xHigherPriorityTaskWoken;
+		xHigherPriorityTaskWoken = pdFALSE;
+		/* Unblock the task by releasing the semaphore. */
+		xSemaphoreGiveFromISR(xSemaphore, &xHigherPriorityTaskWoken);
+		portEND_SWITCHING_ISR( xHigherPriorityTaskWoken );
+	}
+
 }
